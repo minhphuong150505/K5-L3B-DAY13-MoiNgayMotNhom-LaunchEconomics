@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gate 2a · Trợ lý hoàn phí LogiX-VN · Nhóm MoiNgayMotNhom</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --surface: #111b2e;
+    --card: #16233b;
+    --card-border: rgba(148, 163, 184, 0.16);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --emerald: #34d399;
+    --amber: #fbbf24;
+    --rose: #fb7185;
+    --indigo: #818cf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: 40px 60px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(28px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    background:
+      radial-gradient(900px 500px at 90% -10%, rgba(56, 189, 248, 0.11), transparent 60%),
+      radial-gradient(700px 450px at -5% 105%, rgba(52, 211, 153, 0.08), transparent 60%),
+      var(--bg);
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  /* Header */
+  .slide-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 14px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 3.6vw, 48px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(21px, 2.3vw, 30px);
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  h3 {
+    font-size: 15.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .badge-sim { background: rgba(251, 191, 36, 0.14); color: var(--amber); border: 1px solid rgba(251, 191, 36, 0.35); }
+  .badge-ok { background: rgba(52, 211, 153, 0.14); color: var(--emerald); border: 1px solid rgba(52, 211, 153, 0.35); }
+  .badge-warn { background: rgba(251, 113, 133, 0.14); color: var(--rose); border: 1px solid rgba(251, 113, 133, 0.35); }
+  .badge-info { background: rgba(56, 189, 248, 0.14); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35); }
+
+  .sim-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--amber);
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 1px 5px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: 3px;
+  }
+
+  /* Small '!' drill-down button */
+  .info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    min-width: 19px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(56, 189, 248, 0.65);
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--accent);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 5px;
+    padding: 0;
+    transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease, color 0.14s ease;
+  }
+
+  .info-btn:hover, .info-btn:focus-visible {
+    background: var(--accent);
+    color: #0b1220;
+    transform: scale(1.16);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.25);
+    outline: none;
+  }
+
+  .info-btn.warn {
+    border-color: rgba(251, 113, 133, 0.7);
+    background: rgba(251, 113, 133, 0.16);
+    color: var(--rose);
+  }
+  .info-btn.warn:hover { background: var(--rose); color: #0b1220; box-shadow: 0 0 0 4px rgba(251, 113, 133, 0.25); }
+
+  .info-btn.amber {
+    border-color: rgba(251, 191, 36, 0.7);
+    background: rgba(251, 191, 36, 0.16);
+    color: var(--amber);
+  }
+  .info-btn.amber:hover { background: var(--amber); color: #0b1220; box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.25); }
+
+  .info-btn.ok {
+    border-color: rgba(52, 211, 153, 0.7);
+    background: rgba(52, 211, 153, 0.16);
+    color: var(--emerald);
+  }
+  .info-btn.ok:hover { background: var(--emerald); color: #0b1220; box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25); }
+
+  /* Body grids */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    min-height: 0;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .grid-60-40 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+
+  .card.highlight-ok { border-color: rgba(52, 211, 153, 0.45); background: linear-gradient(180deg, rgba(52, 211, 153, 0.08), var(--card)); }
+  .card.highlight-warn { border-color: rgba(251, 113, 133, 0.45); background: linear-gradient(180deg, rgba(251, 113, 133, 0.08), var(--card)); }
+  .card.highlight-amber { border-color: rgba(251, 191, 36, 0.45); background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), var(--card)); }
+  .card.highlight-info { border-color: rgba(56, 189, 248, 0.45); background: linear-gradient(180deg, rgba(56, 189, 248, 0.08), var(--card)); }
+
+  .kpi-val {
+    font-size: clamp(24px, 2.5vw, 35px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .kpi-label {
+    font-size: 12.8px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+
+  .c-ok { color: var(--emerald); }
+  .c-warn { color: var(--rose); }
+  .c-amber { color: var(--amber); }
+  .c-info { color: var(--accent); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--card-border);
+    vertical-align: top;
+    line-height: 1.35;
+  }
+
+  th {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Lists */
+  ul.clean { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13.8px; line-height: 1.42; }
+  ul.clean li { position: relative; padding-left: 17px; }
+  ul.clean li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  ul.clean.ok li::before { background: var(--emerald); }
+  ul.clean.warn li::before { background: var(--rose); }
+  ul.clean.amber li::before { background: var(--amber); }
+
+  /* Bar charts */
+  .bar-row { display: grid; grid-template-columns: 162px 1fr 145px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-track { height: 14px; background: rgba(148, 163, 184, 0.12); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; }
+  .stacked-bar { height: 28px; display: flex; border-radius: 8px; overflow: hidden; margin: 10px 0; }
+
+  .callout {
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.09);
+    border-left: 4px solid var(--accent);
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .callout.amber { background: rgba(251, 191, 36, 0.09); border-left-color: var(--amber); }
+  .callout.ok { background: rgba(52, 211, 153, 0.09); border-left-color: var(--emerald); }
+  .callout.warn { background: rgba(251, 113, 133, 0.09); border-left-color: var(--rose); }
+
+  /* Cover */
+  .cover-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    max-width: 1120px;
+  }
+
+  .team-chip {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .team-chip .name { font-weight: 700; font-size: 14.5px; }
+  .team-chip .role { font-size: 12.5px; color: var(--accent); margin-top: 3px; }
+  .team-chip .id { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-family: ui-monospace, monospace; }
+
+  /* Footer & Nav */
+  .hud {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 52px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--card-border);
+    z-index: 20;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .hud-controls { display: flex; align-items: center; gap: 8px; }
+  .hud button {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .hud button:hover { border-color: var(--accent); color: var(--accent); }
+
+  .progress {
+    position: fixed;
+    left: 0;
+    bottom: 52px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--emerald));
+    transition: width 0.25s ease;
+    z-index: 25;
+  }
+
+  /* Speaker Notes Drawer */
+  .notes-drawer {
+    position: fixed;
+    right: 24px;
+    bottom: 66px;
+    width: min(520px, 92vw);
+    max-height: 44vh;
+    overflow-y: auto;
+    background: #0f172a;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    z-index: 30;
+    display: none;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .notes-drawer.open { display: block; }
+  .notes-drawer h4 { color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+  /* Drill-down Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 10, 20, 0.76);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 100;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal-panel {
+    width: min(780px, 95vw);
+    max-height: 86vh;
+    overflow-y: auto;
+    background: #0f192d;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.7);
+    animation: modalIn 0.16s ease-out;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.25;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .modal-close:hover { border-color: var(--rose); color: var(--rose); }
+
+  .modal-section {
+    margin-bottom: 15px;
+    padding: 13px 15px;
+    border-radius: 12px;
+    background: rgba(22, 35, 59, 0.8);
+    border: 1px solid var(--card-border);
+  }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section h4 {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--accent);
+    margin-bottom: 7px;
+  }
+  .modal-section.why h4 { color: var(--emerald); }
+  .modal-section.cases h4 { color: var(--amber); }
+  .modal-section.qa h4 { color: var(--rose); }
+  .modal-section p, .modal-section li {
+    font-size: 13.8px;
+    line-height: 1.5;
+    color: #e2e8f0;
+  }
+  .modal-section ul {
+    margin-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .formula-box {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.8px;
+    background: #09101d;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #7dd3fc;
+    white-space: pre-wrap;
+    line-height: 1.55;
+    margin-top: 6px;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.9em;
+    background: rgba(148, 163, 184, 0.14);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #e2e8f0;
+  }
+
+  @media print {
+    html, body { overflow: visible; background: #0b1220; }
+    .hud, .progress, .notes-drawer, .modal-backdrop, .info-btn { display: none !important; }
+    .deck { display: block; height: auto; }
+    .slide {
+      position: relative;
+      opacity: 1 !important;
+      transform: none !important;
+      pointer-events: auto;
+      page-break-after: always;
+      height: 100vh;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: COVER -->
+  <section class="slide active" data-notes="Kịch bản mở đầu 10 giây: Xin chào hội đồng Gate 2a. Em là Nguyễn Minh Phương, nhóm MoiNgayMotNhom (L3B). Hôm nay nhóm trình bày Hồ sơ Launch v0 cho Trợ lý hoàn phí LogiX-VN — kèm kết quả phân tích kinh tế học, quản trị lỗi và thiết kế pilot từ mã nguồn src/lab13.py. Đề xuất của nhóm là GO CÓ ĐIỀU KIỆN cho phạm vi pilot noi_dia + hang_nang.">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="badge badge-info">AI20K K5 · L3B · Lab 13 · Launch &amp; Economics</span>
+      <span class="badge badge-sim">Đề xuất Gate 2a: GO CÓ ĐIỀU KIỆN (Pilot)</span>
+    </div>
+
+    <div class="cover-center">
+      <div>
+        <div class="eyebrow">Hồ sơ Launch v0 · Hội đồng Gate 2a</div>
+        <h1>Trợ lý hoàn phí LogiX-VN<br><span style="color:var(--accent)">Định giá Agent &amp; Kế hoạch Pilot</span></h1>
+        <p class="subtitle" style="font-size:17px; max-width:860px; margin-top:14px;">
+          Đánh giá chi phí thật mỗi việc thành công, phân tích độ nhạy, quản trị lỗi Google PAIR và thiết kế thử nghiệm có đối chứng trên mẫu <strong>1.200 yêu cầu / 1.624 lần chạy</strong> (dữ liệu giả lập).
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <div class="team-chip" style="border-color:rgba(56,189,248,0.5)">
+          <div class="name">Nguyễn Minh Phương</div>
+          <div class="role">Trưởng nhóm · Core Dev</div>
+          <div class="id">2A202603997 · src/lab13.py</div>
+        </div>
+        <div class="team-chip">
+          <div class="name">Nguyễn Văn Hải Quân</div>
+          <div class="role">Data &amp; Stats Dev</div>
+          <div class="id">2A202603994 · bang_chi_phi.md</div>
+        </div>
+        <div class="team-chip">
+          <div class="name">Nguyễn Ánh Dương</div>
+          <div class="role">Error &amp; Metrics Analyst</div>
+          <div class="id">2A202604087 · bang_loi &amp; chi_so</div>
+        </div>
+        <div class="team-chip">
+          <div class="name">Trần Việt Anh</div>
+          <div class="role">Gatekeeper · Giữ hồ sơ</div>
+          <div class="id">2A202604029 · pilot_plan &amp; launch</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--muted); align-items:center;">
+        <span>Repo: <code>K5-L3B-DAY13-MoiNgayMotNhom-LaunchEconomics</code></span>
+        <span>•</span>
+        <span>3/3 phép thử A1: <strong class="c-ok">ĐẠT</strong></span>
+        <span>•</span>
+        <span>14/14 unit tests: <strong class="c-ok">PASS</strong></span>
+        <span>•</span>
+        <span>Mẹo khi bảo vệ: bấm nút <span class="info-btn" style="pointer-events:none; margin:0 2px;">!</span> cạnh bất kỳ con số nào để mở chi tiết công thức &amp; case.</span>
+      </div>
+    </div>
+    <div></div>
+  </section>
+
+  <!-- SLIDE 2: BỐI CẢNH & SẢN PHẨM KỸ THUẬT -->
+  <section class="slide" data-notes="Điểm nhấn phần Core Dev (Minh Phương): Toàn bộ con số trong hồ sơ đều xuất ra trực tiếp từ src/lab13.py — đã vượt qua 3/3 phép thử cổng A1 (1,20 · 1,25 · 1,25), có bộ 14 unit/integration test viết theo TDD và chạy sạch không cảnh báo (-W error). Không bịa số, giữ nguyên 2 file CSV và file starter gốc.">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">01 · Bối cảnh &amp; Nền tảng kỹ thuật</div>
+        <h2>Từ trace chạy thử đến bộ công cụ ra quyết định Gate 2a</h2>
+      </div>
+      <span class="badge badge-ok">src/lab13.py · 14/14 tests PASS</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-4">
+        <div class="card">
+          <div class="kpi-val c-info">45.000 <button class="info-btn" data-info="scale_45k" title="Chi tiết quy mô 45.000">!</button></div>
+          <div class="kpi-label">Yêu cầu hoàn phí / tháng<br>(1.500/ngày · 12 depot · 40 CSKH)</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val">1.200 <button class="info-btn" data-info="sample_1200" title="Chi tiết mẫu 1.200 yêu cầu & 1.624 lần chạy">!</button></div>
+          <div class="kpi-label">Yêu cầu mẫu chạy thử 2 tuần<br>(1.624 lần chạy agent ở 6 depot)</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val c-amber">12.000 đ <button class="info-btn amber" data-info="baseline_12k" title="Chi tiết mốc 12.000 đ">!</button></div>
+          <div class="kpi-label">Mốc nhân viên tự làm 1 yêu cầu<br>(6 phút × 2.000 đ/phút)</div>
+        </div>
+        <div class="card highlight-ok">
+          <div class="kpi-val c-ok">1,20 · 1,25 · 1,25 <button class="info-btn ok" data-info="gate_a1" title="Chi tiết 3 phép thử A1">!</button></div>
+          <div class="kpi-label">3 phép thử bắt buộc cổng A1<br>Đạt 100% trước khi tính dữ liệu</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Kiến trúc mã nguồn <code>src/lab13.py</code> (Nguyễn Minh Phương)</h3>
+          <ul class="clean">
+            <li><strong>CP1 (A1–A4):</strong> Kinh tế chạy lại, hàm <code>mo_hinh(...)</code> tính mọi lần chạy vào tử số, chỉ đếm <code>thanh_cong</code> ở mẫu số; tách theo 4 loại &amp; cộng cố định 40 triệu đ/tháng.</li>
+            <li><strong>CP2 (B1–B4):</strong> 9 kịch bản đơn yếu tố, kịch bản đổi cặp tuyến tính, tối ưu chi phí cả hệ thống theo giới hạn chạy lại và mô phỏng xem lại 100%.</li>
+            <li><strong>CP4 (D1) &amp; E1:</strong> 5 câu cỡ mẫu kiểm chứng chéo bằng <code>statsmodels.NormalIndPower</code> + xuất chỉ số đợt chạy thử làm nguồn số chuẩn duy nhất cho cả nhóm.</li>
+            <li><strong>Kiểm thử TDD (<code>tests/test_lab13.py</code>):</strong> 14 test trên dữ liệu tổng hợp &amp; CSV thật, chạy <code>python -W error lab13.py</code> sạch 0 cảnh báo.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>4 câu hỏi cốt lõi hồ sơ phải trả lời</h3>
+          <table>
+            <thead>
+              <tr><th>Câu hỏi</th><th>Bằng chứng chính</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>1. Có đáng chạy không?</strong></td><td><code>src/lab13.py</code> + <code>bang_chi_phi.md</code></td></tr>
+              <tr><td><strong>2. Nhân viên có dùng không?</strong></td><td><code>chi_so.md</code> (7 chỉ số + 10 event)</td></tr>
+              <tr><td><strong>3. Khi hỏng thì sao?</strong></td><td><code>bang_loi.md</code> (20 ca + 5 khắc phục)</td></tr>
+              <tr><td><strong>4. Pilot ra quyết định thế nào?</strong></td><td><code>pilot_plan.yaml</code> + <code>ho_so_launch_v0.md</code></td></tr>
+            </tbody>
+          </table>
+          <div class="callout amber" style="margin-top:12px;">
+            <strong>Nguyên tắc kiểm soát chất lượng:</strong> Mọi con số từ <code>_simulated</code> đều gắn nhãn <span class="sim-tag">simulated</span>; toàn bộ repo 0 từ cấm; mỗi người sở hữu tệp riêng, review chéo qua 7 PR.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: KINH TẾ HỌC CHI PHÍ THẬT (A2 & A4) -->
+  <section class="slide" data-notes="Thông điệp chính (15 giây): Đừng nhìn hoá đơn token 274,7 đ/yêu cầu! Chi phí thật mỗi việc thành công là 4.472 đ (simulated) — gấp 16,3 lần hoá đơn vì giờ nhân viên chiếm tới 92,5% (làm lại 51,8% + xem lại 40,7%). Khi so công bằng với 12.000 đ (cộng 222 ca nhân viên làm thay), cả hệ thống tốn 5.865 đ/yc = 0,49x. Trong phạm vi pilot đã cộng cố định 40 triệu/tháng là 4.599 đ = 0,38x.">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">02 · Mô hình chi phí mỗi việc thành công (CP1 · A2 &amp; A4)</div>
+        <h2>Chi phí thật gấp 16,3× hoá đơn token — 92,5% nằm ở giờ nhân viên</h2>
+      </div>
+      <span class="badge badge-sim">Có số liệu simulated</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-4">
+        <div class="card highlight-info">
+          <div class="kpi-val c-info">4.472 đ <span class="sim-tag">sim</span> <button class="info-btn" data-info="cps_4472" title="Chi tiết 4.472 đ">!</button></div>
+          <div class="kpi-label">Chi phí mỗi việc thành công<br>(4.373.585 đ ÷ 978 việc thành công)</div>
+        </div>
+        <div class="card highlight-warn">
+          <div class="kpi-val c-warn">16,3× <span class="sim-tag">sim</span> <button class="info-btn warn" data-info="ratio_16_3" title="Chi tiết 16,3×">!</button></div>
+          <div class="kpi-label">Gấp hoá đơn token + tool / yêu cầu<br>(274,7 đ đo từ trace)</div>
+        </div>
+        <div class="card highlight-ok">
+          <div class="kpi-val c-ok">5.865 đ <span class="sim-tag">sim</span> <button class="info-btn ok" data-info="sys_5865" title="Chi tiết 5.865 đ = 0,49×">!</button></div>
+          <div class="kpi-label">Chi phí cả hệ thống / yêu cầu<br>(<strong>0,49×</strong> của 12.000 đ · cộng 222 ca)</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val c-amber">4.599 đ <span class="sim-tag">sim</span> <button class="info-btn amber" data-info="fixed_4599" title="Chi tiết 4.599 đ & 5.784 đ">!</button></div>
+          <div class="kpi-label">Phạm vi pilot + cố định 40 tr/tháng<br>(<strong>0,38×</strong> ở 45k yc; 5.784 đ ở nửa KL)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <h3 style="margin:0;">Cơ cấu tổng chi phí 4.373.585 đ trên 1.200 yêu cầu <button class="info-btn amber" data-info="cost_breakdown" title="Chi tiết cơ cấu 92,5% giờ nhân viên & chạy lại">!</button></h3>
+          <span style="font-size:12.5px; color:var(--muted);">Giờ nhân viên: <strong class="c-amber">92,5%</strong> · Token + Tool: <strong class="c-info">7,5%</strong></span>
+        </div>
+        <div class="stacked-bar">
+          <div style="width:51.8%; background:var(--rose); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#0b1220;">Làm lại 51,8% (2,26 tr) [sim]</div>
+          <div style="width:40.7%; background:var(--amber); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#0b1220;">Xem lại 40,7% (1,78 tr) [sim]</div>
+          <div style="width:7.5%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b1220;">7,5%</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Chi tiết khoản mục (A2)</h3>
+          <table>
+            <tbody>
+              <tr><td>Token (mọi 1.624 lần chạy)</td><td class="num">245.585 đ</td><td><span class="badge badge-info">trace</span></td></tr>
+              <tr><td>Tool (5.600 lần gọi × 15 đ)</td><td class="num">84.000 đ</td><td><span class="badge badge-info">trace</span></td></tr>
+              <tr><td><em>Trong đó: chạy lại (attempt &gt; 1)</em></td><td class="num"><em>93.804 đ</em> <button class="info-btn" data-info="cost_breakdown" title="Chi tiết 93.804 đ chạy lại">!</button></td><td><span class="badge badge-info">trace</span></td></tr>
+              <tr><td>Xem lại (890p) &amp; Làm lại (1.132p)</td><td class="num">4.044.000 đ</td><td><span class="badge badge-sim">simulated</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>Chi phí cố định 40 triệu đ/tháng (A4 · noi_dia + hang_nang) <button class="info-btn amber" data-info="fixed_4599" title="Chi tiết A4">!</button></h3>
+          <table>
+            <thead>
+              <tr><th>Khối lượng</th><th class="num">Việc TC/tháng</th><th class="num">Cố định/việc</th><th class="num">CPS + CĐ <span class="sim-tag">sim</span></th></tr>
+            </thead>
+            <tbody>
+              <tr><td>45.000 yc/tháng</td><td class="num">33.750</td><td class="num">1.185 đ</td><td class="num"><strong class="c-ok">4.599 đ (0,38×)</strong></td></tr>
+              <tr><td>22.500 yc (1/2)</td><td class="num">16.875</td><td class="num">2.370 đ</td><td class="num"><strong class="c-amber">5.784 đ (0,48×)</strong></td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:10px;">
+            Không đổi kết luận ở quy mô lớn, nhưng cố định tăng gấp đôi khi khối lượng giảm một nửa trong giai đoạn pilot.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: TÁCH THEO LOẠI & PHẠM VI PILOT (A3) -->
+  <section class="slide" data-notes="Tại sao thu hẹp phạm vi? quoc_te tốn 22.515 đ/việc thành công = 1,88 lần nhân viên tự làm (simulated), và chạy lại tới 3 lần hoàn toàn không giúp vì tỉ lệ ok tụt thảm hại: 30% -> 11,4% -> 2,2%. doi_tac 0,85x sát ngưỡng và có điều khoản riêng. Vì vậy chỉ pilot noi_dia và hang_nang (982/1.200 = 81,8% lưu lượng).">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">03 · Phân tích theo loại yêu cầu (CP1 · A3)</div>
+        <h2>Thu hẹp phạm vi pilot về <code>noi_dia</code> + <code>hang_nang</code> (81,8% lưu lượng)</h2>
+      </div>
+      <span class="badge badge-ok">Loại quoc_te (1,88×) &amp; doi_tac (0,85×)</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-60-40">
+        <div class="card">
+          <h3>Chi phí mỗi việc thành công so với mốc 12.000 đ <span class="sim-tag">simulated</span></h3>
+          <div style="margin-top:14px;">
+            <div class="bar-row">
+              <div><strong>noi_dia</strong> <span style="color:var(--muted)">(824 yc)</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:12%; background:var(--emerald);"></div></div>
+              <div style="text-align:right;"><strong class="c-ok">2.696 đ</strong> · 0,22× <button class="info-btn ok" data-info="loai_noidia" title="Chi tiết noi_dia">!</button></div>
+            </div>
+            <div class="bar-row">
+              <div><strong>hang_nang</strong> <span style="color:var(--muted)">(158 yc)</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:36.5%; background:var(--accent);"></div></div>
+              <div style="text-align:right;"><strong class="c-info">8.221 đ</strong> · 0,69× <button class="info-btn" data-info="loai_hangnang" title="Chi tiết hang_nang">!</button></div>
+            </div>
+            <div class="bar-row">
+              <div><strong>doi_tac</strong> <span style="color:var(--muted)">(68 yc)</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:45.4%; background:var(--amber);"></div></div>
+              <div style="text-align:right;"><strong class="c-amber">10.215 đ</strong> · 0,85× <button class="info-btn amber" data-info="loai_doitac" title="Chi tiết doi_tac">!</button></div>
+            </div>
+            <div class="bar-row">
+              <div><strong>quoc_te</strong> <span style="color:var(--muted)">(150 yc)</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--rose);"></div></div>
+              <div style="text-align:right;"><strong class="c-warn">22.515 đ</strong> · 1,88× <button class="info-btn warn" data-info="loai_quocte" title="Chi tiết quoc_te">!</button></div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--card-border);">
+            <table>
+              <thead>
+                <tr><th>Loại</th><th class="num">Thành công</th><th class="num">Lần chạy/yc</th><th>Quyết định phạm vi</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>noi_dia</code></td><td class="num c-ok">95,0%</td><td class="num">1,11</td><td><span class="badge badge-ok">Vào Pilot</span></td></tr>
+                <tr><td><code>hang_nang</code></td><td class="num c-info">74,1%</td><td class="num">1,47</td><td><span class="badge badge-ok">Vào Pilot</span></td></tr>
+                <tr><td><code>doi_tac</code></td><td class="num c-amber">54,4%</td><td class="num">1,88</td><td><span class="badge badge-sim">Loại (sát ngưỡng, HĐ riêng)</span></td></tr>
+                <tr><td><code>quoc_te</code></td><td class="num c-warn">27,3%</td><td class="num">2,32</td><td><span class="badge badge-warn">Loại (lỗ nặng)</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card highlight-warn" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <h3>Vì sao chạy lại tới 3 lần KHÔNG cứu được <code>quoc_te</code>? <button class="info-btn warn" data-info="loai_quocte" title="Chi tiết các case quoc_te & tỉ lệ ok giảm dần">!</button></h3>
+            <p style="font-size:13.5px; color:var(--muted); margin-bottom:14px;">
+              Tỉ lệ <code>status == ok</code> theo lần thử (đo từ trace):
+            </p>
+            <table>
+              <thead>
+                <tr><th>Loại</th><th class="num">Lần 1</th><th class="num">Lần 2</th><th class="num">Lần 3</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>noi_dia</code></td><td class="num">91,0%</td><td class="num">75,7%</td><td class="num">38,9%</td></tr>
+                <tr><td><code>hang_nang</code></td><td class="num">70,9%</td><td class="num">39,1%</td><td class="num">17,9%</td></tr>
+                <tr><td><code>doi_tac</code></td><td class="num">51,5%</td><td class="num">18,2%</td><td class="num">14,8%</td></tr>
+                <tr style="background:rgba(251,113,133,0.12);"><td><strong class="c-warn">quoc_te</strong></td><td class="num c-warn"><strong>30,0%</strong></td><td class="num c-warn"><strong>11,4%</strong></td><td class="num c-warn"><strong>2,2%</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout warn" style="margin-top:14px;">
+            <strong>Kết luận kỹ thuật:</strong> Lỗi trên <code>quoc_te</code> lặp lại trên cùng yêu cầu (thiếu dữ liệu/ngoài phạm vi), phá vỡ giả định độc lập ở A1. Riêng <code>quoc_te</code> đốt <strong>49%</strong> tiền chạy lại (46.218 / 93.804 đ).
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: ĐỘ NHẠY & HAI BẪY KINH TẾ (CP2 · B1-B4) -->
+  <section class="slide" data-notes="Nếu hội đồng hỏi câu kinh điển 'Xem lại 100% tuần đầu thì sao?': trả lời ngay bằng số B4! Trên noi_dia + hang_nang, xem lại 100% mất 11.743 đ = 0,98x (với 9 phút làm lại) và 12.415 đ = 1,03x (với 15,3 phút TB dữ liệu, simulated) — tức gần như không tiết kiệm hoặc đắt hơn nhân viên! Hoà vốn yêu cầu xem lại <= 5,1 phút (hoặc <= 4,8 phút). B3: giới hạn 2 lần rẻ nhất công ty (6.901.220 đ).">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">04 · Phân tích độ nhạy (CP2 · B1, B2, B3, B4)</div>
+        <h2>Đòn bẩy chi phí là Làm lại &amp; Xem lại — không phải giá token</h2>
+      </div>
+      <span class="badge badge-sim">Tất cả CPS đều simulated</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-60-40">
+        <div class="card">
+          <h3>B1 &amp; B2 · Xếp hạng tác động lên CPS (gốc 4.472 đ) <span class="sim-tag">sim</span> <button class="info-btn amber" data-info="sens_b1_b2" title="Chi tiết 9 kịch bản B1 & cặp B2">!</button></h3>
+          <div style="margin-top:12px;">
+            <div class="bar-row">
+              <div><strong>1. Làm lại ×2</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--rose);"></div></div>
+              <div style="text-align:right;"><strong class="c-warn">+51,8%</strong> (6.787đ)</div>
+            </div>
+            <div class="bar-row">
+              <div><strong>2. Xem lại ×2</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:78.6%; background:var(--amber);"></div></div>
+              <div style="text-align:right;"><strong class="c-amber">+40,7%</strong> (6.292đ)</div>
+            </div>
+            <div class="bar-row">
+              <div><strong>3. Lương +25%</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:44.6%; background:var(--indigo);"></div></div>
+              <div style="text-align:right;"><strong>+23,1%</strong> (5.506đ)</div>
+            </div>
+            <div class="bar-row">
+              <div><strong>Giá token ×2</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:10.8%; background:var(--accent);"></div></div>
+              <div style="text-align:right;"><strong class="c-info">+5,6%</strong> (4.723đ)</div>
+            </div>
+            <div class="bar-row">
+              <div><strong>B2 · Token×2 + Xem×2</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:89.4%; background:linear-gradient(90deg,var(--accent),var(--amber));"></div></div>
+              <div style="text-align:right;"><strong>+46,3%</strong> (6.543đ)</div>
+            </div>
+          </div>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:10px;">
+            Kiểm chứng tuyến tính: mỗi kịch bản giảm nửa giảm đúng bằng nửa mức tăng (51,8 → 25,9; 40,7 → 20,3; 5,6 → 2,8).
+          </p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="card highlight-ok">
+            <h3>B3 · Giới hạn chạy lại: <strong>2 lần</strong> rẻ nhất công ty <button class="info-btn ok" data-info="b3_cap2" title="Chi tiết B3 & 85 ca đẩy sang CSKH">!</button></h3>
+            <table>
+              <thead>
+                <tr><th>Giới hạn</th><th class="num">Không TC</th><th class="num">Cả hệ thống <span class="sim-tag">sim</span></th><th class="num">CPS</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1 lần</td><td class="num">319</td><td class="num">7.449.781 đ</td><td class="num">4.111 đ (min)</td></tr>
+                <tr style="background:rgba(52,211,153,0.12);"><td><strong class="c-ok">2 lần</strong></td><td class="num">234</td><td class="num c-ok"><strong>6.901.220 đ</strong></td><td class="num">4.237 đ</td></tr>
+                <tr><td>3 lần</td><td class="num">222</td><td class="num">7.037.585 đ</td><td class="num">4.472 đ</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:12px; color:var(--muted); margin-top:6px;">
+              Tối ưu riêng CPS (1 lần) đẩy thêm 85 ca sang CSKH, làm tổng hệ thống đắt thêm 548.561 đ.
+            </p>
+          </div>
+
+          <div class="card highlight-warn">
+            <h3>B4 · Bẫy xem lại 100% (<code>noi_dia</code> + <code>hang_nang</code>) <button class="info-btn warn" data-info="b4_fullreview" title="Chi tiết tính B4 & ngưỡng hoà vốn">!</button></h3>
+            <ul class="clean warn" style="font-size:13px;">
+              <li>Làm lại 9 phút (giả định): <strong>11.743 đ = 0,98×</strong> <span class="sim-tag">sim</span> (hoà vốn ≤ 5,1 phút xem lại).</li>
+              <li>Làm lại 15,3 phút (TB dữ liệu): <strong class="c-warn">12.415 đ = 1,03×</strong> <span class="sim-tag">sim</span> — <strong>đắt hơn nhân viên tự làm</strong> (hoà vốn ≤ 4,8 phút).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: QUẢN TRỊ LỖI & GRACEFUL FAILURE (CP3) -->
+  <section class="slide" data-notes="CP3: Làm cực kỳ trung thực theo RULES.md. Hai người gắn nhãn tay độc lập trùng 12/20 = 60% (< 80%), KHÔNG sửa cột gốc mà viết lại định nghĩa cho 2 cặp hay nhầm rồi thống nhất đủ 20/20 ca. Phát hiện đắt giá từ CSV: 100% (51/51) ca mở lại trong 7 ngày đều là ca làm lại.">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">05 · Phân loại lỗi &amp; Graceful Failure (CP3 · Google PAIR)</div>
+        <h2>100% lỗi lọt đến khách đến từ <code>lam_lai</code> — 5 cơ chế chặn đo được</h2>
+      </div>
+      <span class="badge badge-info">20 ca · Đồng thuận 60% → Sửa định nghĩa → Chốt 20/20</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-3">
+        <div class="card">
+          <div class="kpi-val c-warn">35,2% <button class="info-btn warn" data-info="err_35pct" title="Chi tiết 572/1.624 lần lỗi">!</button></div>
+          <div class="kpi-label">Lần chạy lỗi (572 / 1.624 lần)<br>Tốn 123.179 đ token + tool</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val c-amber">51 / 51 <button class="info-btn amber" data-info="err_reopen51" title="Chi tiết 51 ca mở lại 7 ngày">!</button></div>
+          <div class="kpi-label">Ca mở lại 7 ngày đều là <code>lam_lai</code><br>(69% số ca làm lại · 4,25% toàn mẫu)</div>
+        </div>
+        <div class="card highlight-ok">
+          <div class="kpi-val c-ok">12/20 → 20/20 <button class="info-btn ok" data-info="err_agreement" title="Chi tiết 8 ca lệch & quy tắc thống nhất">!</button></div>
+          <div class="kpi-label">Gắn độc lập 60%, giữ nguyên gốc,<br>viết lại định nghĩa &amp; chốt đủ 8 ca lệch</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Bảng khắc phục 5 ca đại diện đủ 5 loại Google PAIR (<code>report/team/bang_loi.md</code>)</h3>
+        <table>
+          <thead>
+            <tr><th style="width:44px">Ca</th><th style="width:130px">Loại lỗi</th><th>Phát hiện đo được (Event · Ngưỡng · Tần suất)</th><th>Cơ chế khắc phục</th><th style="width:140px">Phụ trách</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>1</strong></td><td>Do người dùng</td><td><code>refund_ledger_write</code> (<code>bank_rejected</code>) &gt; 1%/ngày</td><td>Kiểm tra STK &amp; hiện tên chủ TK xác nhận trước khi gửi</td><td>PM trợ lý hoàn phí</td></tr>
+            <tr><td><strong>2</strong></td><td>Hệ thống</td><td>Kiểm tra hằng ngày tool lệch <code>loai_hang</code> (ngưỡng 0 ca) + <code>ticket_reopened</code></td><td>Đọc cân nặng trực tiếp từ vận đơn, chặn gọi tool khi lệch</td><td>Kỹ sư trưởng agent</td></tr>
+            <tr><td><strong>3</strong></td><td>Ngữ cảnh</td><td><code>ticket_reopened</code> (<code>chua_nhan_tien</code>) dù sổ cái ok &gt; 0,5%/tuần</td><td>Cho chọn ví (5 phút) / NH (1–3 ngày), ghi rõ kênh nhận</td><td>Trưởng nhóm CSKH</td></tr>
+            <tr><td><strong>11</strong></td><td>Giới hạn HT</td><td><code>handoff_to_staff</code> (<code>dau_vao_khong_ho_tro</code>) &gt; 2%/tuần</td><td>Báo rõ chưa hỗ trợ thoại, hiện 3 nút lý do hoặc chuyển CSKH</td><td>PM trợ lý hoàn phí</td></tr>
+            <tr><td><strong>12</strong></td><td>Ngầm</td><td>Chi phí token+tool/yc theo depot &gt; 1,5× trung vị tuần (259–287 đ) <button class="info-btn" data-info="err_depot12" title="Chi tiết nền 259-287 đ & Ca 12">!</button></td><td>Tool trả lỗi rõ thay vì để agent retry vòng lặp; log theo depot</td><td>Kỹ sư trưởng agent</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: THIẾT KẾ PILOT & CỠ MẪU (CP4 · D1-D3) -->
+  <section class="slide" data-notes="Nếu hội đồng hỏi về cỡ mẫu & ngưỡng an toàn: (1) 40 nhân viên chia theo cụm 20+20 chỉ có trần hiệu dụng 20/0,02 = 1.000 < 1.251 nên không đủ cho mức chênh 5 điểm. Nhóm chọn chia theo nhân viên 20+20 (đủ 20 cụm, tránh tràn tác động như chia theo yêu cầu) và công khai đánh đổi MDE = 6 điểm (n=859, m>=299, DE=6,96, power thực ở 5 điểm = 0,64). (2) Tỉ lệ mở lại hiện tại 3,97% trong phạm vi nên không đặt trần cứng 3% mà so chênh +2 điểm với đối chứng kèm trần 6%.">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">06 · Thiết kế thử nghiệm Pilot (CP4 · D1, D2, D3)</div>
+        <h2>Chia cụm 20 + 20 nhân viên, chấp nhận MDE 6 điểm &amp; có 3 luật dừng cứng</h2>
+      </div>
+      <span class="badge badge-sim">Đánh đổi minh bạch: power = 0,64 ở 5 điểm</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-2">
+        <div class="card">
+          <h3>D1 · So sánh 3 cách chia (α=0,05 · power=0,80 · ICC=0,02)</h3>
+          <table>
+            <thead>
+              <tr><th>Cách chia</th><th class="num">N hiệu dụng</th><th>Đủ 5 điểm (1.251)?</th><th>Tách tác động?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Theo yêu cầu</td><td class="num">1.251 / nhóm <button class="info-btn" data-info="d1_1251" title="Chi tiết công thức 1.251 & b=3.103">!</button></td><td class="c-ok">Đủ (SM: 1.250)</td><td class="c-warn">Kém (tràn tác động)</td></tr>
+              <tr style="background:rgba(52,211,153,0.10);"><td><strong class="c-ok">Nhân viên (20+20)</strong></td><td class="num"><strong>Tối đa 1.000</strong> <button class="info-btn ok" data-info="d1_caps" title="Chi tiết giới hạn cụm c/ICC">!</button></td><td class="c-amber"><strong>Đạt 6 điểm (859)</strong></td><td class="c-ok"><strong>Tốt (20 cụm, phân tầng)</strong></td></tr>
+              <tr><td>Depot (6+6)</td><td class="num">Tối đa 300 <button class="info-btn warn" data-info="d1_caps" title="Chi tiết trần 300 depot">!</button></td><td class="c-warn">Không đủ</td><td class="c-warn">Chỉ 6 cụm (&lt; 20)</td></tr>
+            </tbody>
+          </table>
+          <div class="callout amber" style="margin-top:12px;">
+            <strong>Phương án chọn:</strong> 20 + 20 nhân viên (ngẫu nhiên phân tầng theo depot), <code>MDE = 6 điểm</code> → cần <strong>m ≥ 299 yc/NV</strong> (<code>DE = 6,96</code>), rollout <code>10% → 25% → 50%</code> (~4 tuần). <em>Nêu rõ con số bất lợi:</em> nếu tác động thật là 5 điểm, power còn <strong>0,64</strong> <button class="info-btn amber" data-info="d1_mde6" title="Chi tiết giải m>=299, DE=6,96, power=0,64">!</button>.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>D3 · Ba luật dừng viết trước (NẾU – TRONG – THÌ – KHÔNG THÌ) <button class="info-btn warn" data-info="d3_stoprules" title="Chi tiết nền 3,97% & 3 luật dừng">!</button></h3>
+          <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">
+            Nền mở lại 7 ngày hiện tại: <strong>4,25%</strong> toàn mẫu · <strong>3,97%</strong> trong phạm vi → <em>không đặt trần cứng 3%</em> để tránh dừng giả tuần 1.
+          </p>
+          <ul class="clean warn" style="font-size:13px;">
+            <li><strong>An toàn:</strong> NẾU mở lại 7 ngày cao hơn đối chứng ≥ 2 điểm hoặc &gt; 6%, hoặc ≥ 1 ca hoàn trùng TRONG 3 ngày liên tiếp → <strong>Giám đốc vận hành</strong> tắt trợ lý trong 30 phút; KHÔNG THÌ cấm sang bước rollout tiếp.</li>
+            <li><strong>Chi phí:</strong> NẾU CPS &gt; 8.000 đ TRONG 2 tuần liên tiếp → <strong>PM</strong> thu hẹp về <code>noi_dia</code> &amp; giới hạn 2 lần chạy; KHÔNG THÌ không mở <code>hang_nang</code>.</li>
+            <li><strong>Sử dụng:</strong> NẾU tỉ lệ bỏ qua gợi ý &gt; 40% TRONG 1 tuần → <strong>Trưởng nhóm CSKH</strong> phỏng vấn 5 NV trong 3 ngày; KHÔNG THÌ dừng chuyển bước rollout.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: CHỈ SỐ, EVENT & RỦI RO KINH TẾ (CP5 · E1-E2) -->
+  <section class="slide" data-notes="CP5: Ba chỉ số đợt chạy thử (82,83% · 27,12% · 4,25%) chỉ phản ánh chạy thử, tuyệt đối không viết 'trợ lý đã nâng từ 0,70' vì chưa có đối chứng. Cả 7 chỉ số và CPS đều tính được từ 10 event có trace_id. Bốn dòng rủi ro kinh tế nối trực tiếp với bảng độ nhạy B1-B4 và A4.">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">07 · Hệ thống đo lường &amp; Rủi ro kinh tế (CP5 · E1 &amp; E2)</div>
+        <h2>10 event có <code>trace_id</code> đo đủ mọi chỉ số &amp; 4 rủi ro kinh tế cốt lõi</h2>
+      </div>
+      <span class="badge badge-info">chi_so.md · Đã đồng bộ 100%</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-3">
+        <div class="card">
+          <div class="kpi-val c-ok">82,83% <button class="info-btn ok" data-info="e1_8283" title="Chi tiết 994/1.200 & phạm vi 92,26%">!</button></div>
+          <div class="kpi-label"><strong>Chỉ số chính</strong> (đợt chạy thử, chưa có đối chứng)<br>Đóng ≤ 24h &amp; không mở lại 7 ngày (92,26% trong PV)</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val c-amber">27,12% <button class="info-btn amber" data-info="e1_2712" title="Chi tiết 48/177 bỏ qua gợi ý">!</button></div>
+          <div class="kpi-label"><strong>Chỉ số dùng</strong> · Tỉ lệ bỏ qua gợi ý<br>48/177 (41 sửa + 7 bỏ · 21,09% trong PV)</div>
+        </div>
+        <div class="card">
+          <div class="kpi-val c-warn">4,25% <button class="info-btn warn" data-info="err_reopen51" title="Chi tiết 51/1.200 & 39/982 mở lại">!</button></div>
+          <div class="kpi-label"><strong>Chỉ số an toàn</strong> · Mở lại trong 7 ngày<br>51/1.200 toàn mẫu · 3,97% (39/982) trong PV</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>E2 · Ma trận 4 rủi ro kinh tế lấy trực tiếp từ bảng độ nhạy <span class="sim-tag">simulated</span></h3>
+        <table>
+          <thead>
+            <tr><th>Rủi ro</th><th>Tác động đã tính</th><th>Dấu hiệu theo dõi</th><th>Hành động</th><th>Phụ trách</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Làm lại ×2</strong></td><td>+51,8% → 6.787 đ <button class="info-btn warn" data-info="sens_b1_b2" title="Chi tiết làm lại ×2">!</button></td><td><code>staff_rework_completed</code> &gt; 7%/tuần</td><td>Thu hẹp <code>noi_dia</code>, rà 20 trace, giới hạn 2 lần</td><td>PM trợ lý hoàn phí</td></tr>
+            <tr><td><strong>Xem lại 100% kéo dài</strong></td><td>11.743 đ (0,98×) · 12.415 đ (1,03×) <button class="info-btn warn" data-info="b4_fullreview" title="Chi tiết xem lại 100%">!</button></td><td>% xem lại &gt; 50% cuối bước 0,25; trung vị &gt; 5,1p</td><td>Giảm xem lại theo bậc khi <code>sua+bo</code> &lt; 15%/tuần</td><td>Trưởng nhóm CSKH</td></tr>
+            <tr><td><strong>Khối lượng thấp</strong></td><td>Cố định +1.185 → +2.370 đ/việc <button class="info-btn amber" data-info="fixed_4599" title="Chi tiết cố định nửa khối lượng">!</button></td><td>Việc thành công &lt; 50% kế hoạch (&lt; 3.900/tuần)</td><td>Dừng mở rộng pilot, đàm phán lại phí cố định</td><td>PM trợ lý hoàn phí</td></tr>
+            <tr><td><strong>Lương NV +25%</strong></td><td>CPS 5.506 đ (+23,1%); cả HT 7.262 đ = 0,48× <button class="info-btn" data-info="e2_wage25" title="Chi tiết lương +25% và 0,48×">!</button></td><td>Đơn giá phút &gt; 2.000 đ; tổng phút xem+làm lại</td><td>Ưu tiên giảm phút xem lại &amp; làm lại</td><td>Giám đốc vận hành</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: ĐỀ XUẤT GATE 2A & Q&A -->
+  <section class="slide" data-notes="Chốt 15 giây cuối: Nhóm đề xuất GO CÓ ĐIỀU KIỆN cho pilot phạm vi noi_dia + hang_nang (giới hạn 2 lần chạy) với 4 điều kiện cụ thể, có người phụ trách và ngày kiểm tra rõ ràng — xử lý trực diện cả 4 con số bất lợi (quoc_te 1,88x, xem lại 100% 0,98-1,03x, 92,5% số liệu simulated, và power 0,64 ở mức 5 điểm). Cảm ơn hội đồng và sẵn sàng trả lời câu hỏi!">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">08 · Quyết định Gate 2a &amp; Điều kiện mở Pilot</div>
+        <h2>Đề xuất: <span class="c-amber">GO CÓ ĐIỀU KIỆN</span> cho pilot <code>noi_dia</code> + <code>hang_nang</code></h2>
+      </div>
+      <span class="badge badge-ok">Khớp bằng chứng · Xử lý đủ 4 điểm bất lợi</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-2">
+        <div class="card highlight-ok">
+          <h3>4 điều kiện bắt buộc trước &amp; trong tuần 1 Pilot</h3>
+          <ul class="clean ok" style="font-size:13.8px;">
+            <li><strong>1. Chặn lỗi Hệ thống nghiêm trọng (ca 7 &amp; 20):</strong> Hoàn tất khoá chống trùng sổ cái và đối soát trạng thái trước ngày khởi chạy — <em>Phụ trách: Kỹ sư trưởng agent</em> <button class="info-btn ok" data-info="err_agreement" title="Chi tiết ca 7 & ca 20">!</button>.</li>
+            <li><strong>2. Ký chấp nhận đánh đổi cỡ mẫu:</strong> Chấp nhận MDE 6 điểm (<code>n=859</code>, <code>m≥299</code>, power 0,64 ở mức 5 điểm) &amp; giới hạn tối đa 2 lần chạy — <em>Phụ trách: Giám đốc vận hành</em> <button class="info-btn amber" data-info="d1_mde6" title="Chi tiết MDE 6 điểm & power 0,64">!</button>.</li>
+            <li><strong>3. Thay số <code>simulated</code> bằng đo thật:</strong> Bật đủ 10 event có <code>trace_id</code>; tính lại mô hình chi phí bằng phút đo thật sau tuần 1 — <em>Phụ trách: PM trợ lý hoàn phí</em> <button class="info-btn" data-info="cost_breakdown" title="Chi tiết 92,5% số liệu simulated">!</button>.</li>
+            <li><strong>4. Lộ trình hạ xem lại theo bậc:</strong> Giảm dần từ xem lại 100% (0,98–1,03× <span class="sim-tag">sim</span>) khi <code>sua + bo &lt; 15%</code>, kèm kiểm tra mẫu 100 đơn/tuần — <em>Phụ trách: Trưởng nhóm CSKH &amp; Kế toán trưởng</em> <button class="info-btn warn" data-info="b4_fullreview" title="Chi tiết bẫy B4">!</button>.</li>
+          </ul>
+        </div>
+
+        <div class="card highlight-info">
+          <h3>Sẵn sàng phản biện hội đồng Gate 2a (Q&amp;A)</h3>
+          <ul class="clean" style="font-size:13.5px;">
+            <li><strong>Hỏi: Tuần đầu xem lại 100% thì có lỗ không?</strong><br><span style="color:var(--muted)">Đáp: 11.743 đ (0,98×) với 9p làm lại và 12.415 đ (1,03×) với 15,3p dữ liệu <span class="sim-tag">sim</span> — không tiết kiệm. Vì vậy điều kiện #4 bắt buộc hạ xem lại theo bậc và theo dõi trung vị ≤ 5,1 phút.</span></li>
+            <li><strong>Hỏi: Chia cụm có đủ 20 cụm mỗi nhóm không?</strong><br><span style="color:var(--muted)">Đáp: Có, đúng 20 + 20 nhân viên (phân tầng theo depot); đã loại cách chia 6 + 6 depot (trần 300) và chia theo yêu cầu (tràn tác động).</span></li>
+            <li><strong>Hỏi: Ngưỡng mở lại có làm pilot dừng giả tuần 1?</strong><br><span style="color:var(--muted)">Đáp: Không. Nền hiện tại là 3,97% trong phạm vi nên luật dừng so chênh +2 điểm với đối chứng song song kèm trần 6%, không dùng ngưỡng cứng 3%.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout ok" style="text-align:center; font-size:15px;">
+        <strong>Nhóm MoiNgayMotNhom (L3B)</strong> · Cảm ơn hội đồng Gate 2a — Mời hội đồng đặt câu hỏi phản biện!
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="notes-drawer" id="notesDrawer">
+  <h4>Ghi chú thuyết trình (nhấn N để ẩn/hiện)</h4>
+  <div id="notesText"></div>
+</div>
+
+<!-- DRILL-DOWN MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-panel">
+    <div class="modal-top">
+      <div>
+        <div id="modalBadge" style="margin-bottom:6px;"></div>
+        <div class="modal-title" id="modalTitle"></div>
+      </div>
+      <button class="modal-close" id="modalClose" title="Đóng (Esc)">×</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="hud">
+  <div><strong>MoiNgayMotNhom</strong> · Lab 13 Gate 2a · Bấm <span class="info-btn" style="pointer-events:none; margin:0 3px;">!</span> cạnh các số để xem chi tiết &amp; case</div>
+  <div class="hud-controls">
+    <button id="prevBtn" title="Slide trước (←)">← Trước</button>
+    <span id="counter" style="min-width:58px; text-align:center; font-variant-numeric:tabular-nums;">1 / 9</span>
+    <button id="nextBtn" title="Slide sau (→ / Space)">Sau →</button>
+    <button id="notesBtn" title="Ghi chú thuyết trình (N)">Ghi chú (N)</button>
+    <button id="fsBtn" title="Toàn màn hình (F)">Toàn màn hình (F)</button>
+  </div>
+</div>
+
+<script>
+  const INFO_DATA = {
+    scale_45k: {
+      badge: '<span class="badge badge-info">Bối cảnh LogiX-VN · Số đề bài</span>',
+      title: 'Quy mô 45.000 yêu cầu/tháng (1.500 yêu cầu/ngày)',
+      formula: '1.500 yêu cầu/ngày × 30 ngày = 45.000 yêu cầu/tháng\nChia đều 40 nhân viên CSKH ≈ 37,5 yêu cầu/nhân viên/ngày\nTrong phạm vi pilot (noi_dia + hang_nang = 982/1.200 = 81,8%):\n  → ~1.228 yêu cầu/ngày ≈ 30,7 yêu cầu/nhân viên/ngày',
+      why: 'Con số này quyết định 2 thứ quan trọng nhất của bài: (1) mức phân bổ chi phí cố định 40 triệu đ/tháng trên mỗi việc thành công ở A4, và (2) thời lượng chạy pilot cần thiết để mỗi nhân viên tích luỹ đủ m ≥ 299 yêu cầu ở D1.',
+      cases: [
+        'Toàn công ty gồm <strong>12 depot</strong> và <strong>40 nhân viên CSKH</strong>.',
+        'Ở quy mô đầy đủ 45.000 yc/tháng, phạm vi pilot tạo ra <code>45.000 × (900/1.200) = 33.750</code> việc thành công/tháng.',
+        'Trong đợt chạy thử 2 tuần vừa rồi, trợ lý mới bật ở <strong>6 depot</strong> (<code>D01</code> đến <code>D06</code>) và nhóm nhận mẫu ngẫu nhiên 1.200 yêu cầu.'
+      ],
+      qa: 'Nếu khối lượng thực tế chỉ bằng một nửa (22.500 yc/tháng, ví dụ lúc mới rollout 50%), chi phí cố định mỗi việc thành công tăng gấp đôi từ 1.185 đ lên 2.370 đ.'
+    },
+
+    sample_1200: {
+      badge: '<span class="badge badge-info">Dữ liệu giả lập · logix_requests.csv &amp; logix_runs.csv</span>',
+      title: 'Mẫu 1.200 yêu cầu và 1.624 lần chạy của agent',
+      formula: 'logix_requests.csv: 1.200 dòng (mỗi dòng 1 request_id: RF-70000 … RF-71199)\nlogix_runs.csv:     1.624 dòng (1.200 lần chạy đầu + 424 lần chạy lại attempt 2 & 3)\nTrung bình:         1.624 ÷ 1.200 = 1,353 lần chạy / yêu cầu',
+      why: 'Một yêu cầu bị lỗi có thể chạy lại tối đa 3 lần (<code>attempt = 1, 2, 3</code>), vì vậy số dòng trong <code>logix_runs.csv</code> (1.624) lớn hơn số yêu cầu (1.200) đúng 424 lần chạy lại.',
+      cases: [
+        '<strong>978 yêu cầu <code>thanh_cong</code> (81,5%):</strong> đã đóng, không mở lại trong 7 ngày, không sai tiền (VD: <code>RF-70002</code>, <code>RF-70012</code>).',
+        '<strong>148 yêu cầu <code>chuyen_nhan_vien</code> (12,3%):</strong> chạy hết 3 lần vẫn lỗi nên đẩy về CSKH (VD: <code>RF-70008</code>, <code>RF-70020</code>, <code>RF-70039</code>).',
+        '<strong>74 yêu cầu <code>lam_lai</code> (6,2%):</strong> trợ lý trả lời sai, nhân viên phải làm lại (VD: <code>RF-70028</code> 12 phút, <code>RF-70033</code> 25 phút).'
+      ],
+      qa: 'Bắt buộc đọc CSV bằng <code>keep_default_na=False</code>; nếu thiếu, ô trống trong <code>quyet_dinh_xem_lai</code> biến thành NaN làm sai phép đếm chỉ số dùng.'
+    },
+
+    baseline_12k: {
+      badge: '<span class="badge badge-sim">Giả định bảng giá của lab</span>',
+      title: 'Mốc nhân viên tự làm: 12.000 đ / yêu cầu',
+      formula: '6 phút/yêu cầu × 2.000 đ/phút = 12.000 đ/yêu cầu\n(2.000 đ/phút đã bao gồm lương, bảo hiểm và chi phí văn phòng)',
+      why: 'Đây là mốc đối chiếu kinh tế (baseline) để trả lời câu hỏi #1 "Trợ lý có đáng chạy hơn nhân viên tự làm không?". Ngoài ra, mọi yêu cầu trợ lý không giải quyết xong (222 ca) đều phải cộng 12.000 đ/ca khi tính chi phí cả hệ thống.',
+      cases: [
+        'Nếu lương nhân viên tăng 25% (lên 2.500 đ/phút ở B1/E2), mốc tự làm cũng tăng tương ứng lên <code>6 × 2.500 = 15.000 đ/yêu cầu</code>.',
+        'Trong 1.200 yêu cầu, nếu không có trợ lý, công ty tốn: <code>1.200 × 12.000 = 14.400.000 đ</code>.'
+      ],
+      qa: 'Tuyệt đối không lấy thẳng CPS 4.472 đ ÷ 12.000 đ = 0,37× rồi kết luận "rẻ bằng 0,37×" vì chưa tính 222 ca nhân viên phải làm thay!'
+    },
+
+    gate_a1: {
+      badge: '<span class="badge badge-ok">Cổng bắt buộc A1 · ĐẠT 3/3</span>',
+      title: 'Ba phép thử đáp án biết trước (1,20 · 1,25 · 1,25)',
+      formula: 'Với xác suất mỗi lần chạy đúng độc lập p = 0,8:\n1) E[số lần chạy | tối đa k=2] = (1 − (1 − 0,8)²) / 0,8 = (1 − 0,04) / 0,8 = 1,20\n2) E[số lần chạy | k = ∞]      = 1 / 0,8 = 1,25\n3) Hệ số CPS (k=3)             = E[lần chạy] / P(thành công)\n                               = [(1 − 0,2³) / 0,8] / (1 − 0,2³)\n                               = 1,24 / 0,992 = 1,25 (= 1/p, k triệt tiêu!)',
+      why: 'Quy tắc 1 của Lab 13 yêu cầu qua đủ 3 phép thử này trước khi đụng vào CSV. Điều thú vị về toán học: khi các lần thử độc lập, đặt trần k lần không làm giảm hệ số chi phí mỗi việc thành công vì tử số và mẫu số đều nhân cùng hệ số <code>(1 − (1−p)^k)</code>.',
+      cases: [
+        '<strong>Case 1 (k=2, p=0,8):</strong> 80% xong ở lần 1 (1 lần), 20% phải chạy lần 2 (2 lần) → <code>0,8×1 + 0,2×2 = 1,20</code>; thành công 96%.',
+        '<strong>Case 2 (k=∞, p=0,8):</strong> Phân phối hình học → trung bình <code>1/0,8 = 1,25</code> lần, thành công 100%.',
+        '<strong>Case 3 (k=3, p=0,8):</strong> Trung bình 1,24 lần chạy cho 99,2% thành công → <code>1,24 / 0,992 = 1,25×</code> giá 1 lần chạy.'
+      ],
+      qa: 'Khi lên dữ liệu thật (A3), giả định "các lần chạy độc lập" bị phá vỡ hoàn toàn ở <code>quoc_te</code> (ok tụt từ 30% → 11,4% → 2,2%), khiến chạy lại càng làm lỗ nặng hơn.'
+    },
+
+    cps_4472: {
+      badge: '<span class="badge badge-sim">A2 · Cost-of-Pass [simulated]</span>',
+      title: 'Chi phí mỗi việc thành công: 4.472 đ [simulated]',
+      formula: 'Tử số (MỌI lần chạy, kể cả lần lỗi):\n  Token (1.624 lần):        245.585 đ  [đo từ trace]\n+ Tool  (5.600 lần × 15 đ):  84.000 đ  [đo từ trace]\n+ Xem lại (890p × 2.000 đ): 1.780.000 đ [simulated]\n+ Làm lại (1.132p × 2.000): 2.264.000 đ [simulated]\n= Tổng chi phí:             4.373.585 đ\n\nMẫu số (CHỈ đếm ket_qua == "thanh_cong"): 978 việc\nCPS = 4.373.585 ÷ 978 = 4.471,97 ≈ 4.472 đ [simulated]',
+      why: 'Theo khung Cost-of-Pass (Erol et al.), mọi lần chạy thất bại vẫn tốn token, tool và công sức con người xử lý, nhưng chỉ những yêu cầu <code>thanh_cong</code> mới tạo ra giá trị. Vì vậy chi phí các ca hỏng được dồn vào những ca thành công.',
+      cases: [
+        '<strong>978 ca <code>thanh_cong</code></strong> nằm ở mẫu số (783 <code>noi_dia</code>, 117 <code>hang_nang</code>, 41 <code>quoc_te</code>, 37 <code>doi_tac</code>).',
+        '<strong>148 ca <code>chuyen_nhan_vien</code></strong> đóng góp token + tool của 3 lần chạy thất bại vào tử số (0 phút simulated) nhưng KHÔNG vào mẫu số.',
+        '<strong>74 ca <code>lam_lai</code></strong> đóng góp cả token + tool lẫn 1.132 phút làm lại (2.264.000 đ) vào tử số nhưng KHÔNG vào mẫu số.'
+      ],
+      qa: 'Hội đồng hay hỏi: "Tại sao chia cho 978 chứ không phải 1.200?". Trả lời: nếu chia cho 1.200 sẽ tính oan 222 ca hỏng/chuyển nhân viên là thành công, làm hạ giả tạo chi phí mỗi việc hoàn thành.'
+    },
+
+    ratio_16_3: {
+      badge: '<span class="badge badge-sim">A2 · Tỉ số bội [simulated]</span>',
+      title: 'Gấp 16,3 lần hoá đơn token + tool mỗi yêu cầu',
+      formula: 'Hoá đơn token + tool / yêu cầu = (245.585 + 84.000) ÷ 1.200 = 274,65 ≈ 274,7 đ [trace]\nChi phí thật mỗi việc thành công = 4.472 đ [simulated]\nHệ số gấp = 4.471,97 ÷ 274,65 = 16,28 ≈ 16,3 lần [simulated]',
+      why: 'Nếu chỉ nhìn hoá đơn API/token (274,7 đ/yêu cầu), ban lãnh đạo sẽ tưởng trợ lý gần như miễn phí. Thực tế chi phí ẩn của con người (xem lại + làm lại) chiếm tới 92,5% tổng chi phí, kéo giá thật lên gấp 16,3 lần.',
+      cases: [
+        'Token + tool chỉ chiếm <code>329.585 ÷ 4.373.585 = 7,5%</code> tổng chi phí.',
+        'Giờ nhân viên chiếm <code>4.044.000 ÷ 4.373.585 = 92,5%</code> (51,8% làm lại + 40,7% xem lại) [simulated].'
+      ],
+      qa: 'Check tự kiểm tra trong đề: nếu số của nhóm chỉ gấp 1–2 lần hoá đơn token là chắc chắn đã quên cộng giờ nhân viên (cột <code>*_simulated</code>).'
+    },
+
+    sys_5865: {
+      badge: '<span class="badge badge-sim">A2 · So sánh công bằng cả hệ thống [simulated]</span>',
+      title: 'Chi phí cả hệ thống: 5.865 đ/yêu cầu = 0,49× của 12.000 đ',
+      formula: 'Chi phí trợ lý (mọi khoản):      4.373.585 đ\n+ Nhân viên làm thay 222 ca hỏng: 222 × 12.000 = 2.664.000 đ\n= Tổng chi phí cả hệ thống:       7.037.585 đ [simulated]\n\nChia đều 1.200 yêu cầu: 7.037.585 ÷ 1.200 = 5.864,65 ≈ 5.865 đ/yêu cầu\nSo với nhân viên tự làm: 5.865 ÷ 12.000 = 0,489 ≈ 0,49× [simulated]',
+      why: 'Con số 4.472 đ chỉ tính riêng phần việc trợ lý làm xong, chưa tính chi phí nhân viên phải gánh thay các ca không thành công. Để so công bằng với phương án "100% nhân viên tự làm (12.000 đ/yc)", bắt buộc cộng tiền nhân viên xử lý phần rơi rụng.',
+      cases: [
+        '<strong>222 ca không thành công</strong> = <strong>148 ca <code>chuyen_nhan_vien</code></strong> (VD: <code>RF-70008</code>, <code>RF-70020</code>, <code>RF-70039</code>) + <strong>74 ca <code>lam_lai</code></strong> (VD: <code>RF-70028</code>, <code>RF-70033</code>).',
+        'Tổng hệ thống 7.037.585 đ so với 14.400.000 đ (tự làm 100%) → tiết kiệm ròng <strong>7.362.415 đ (~51%)</strong> trên mẫu 1.200 yêu cầu [simulated].'
+      ],
+      qa: 'Cảnh báo đỏ của đề bài: "Đừng viết rẻ bằng 0,37× (4.472 ÷ 12.000) nếu chưa cộng phần chuyển nhân viên!" — Nhóm đã tránh hoàn toàn lỗi này.'
+    },
+
+    fixed_4599: {
+      badge: '<span class="badge badge-sim">A4 · Chi phí cố định 40 triệu đ/tháng [simulated]</span>',
+      title: 'Phạm vi pilot + cố định: 4.599 đ (0,38×) & 5.784 đ (0,48×)',
+      formula: 'Phạm vi pilot (noi_dia + hang_nang): 982 yêu cầu → 900 việc thành công\nTổng chi phí biến đổi phạm vi = 3.072.513 đ → CPS biến đổi = 3.072.513 ÷ 900 = 3.414 đ [sim]\n\n1) Quy mô đầy đủ (45.000 yc/tháng):\n   Việc TC/tháng = 45.000 × (900 / 1.200) = 33.750 việc\n   Cố định/việc  = 40.000.000 ÷ 33.750 = 1.185 đ\n   CPS + cố định = 3.414 + 1.185 = 4.599 đ = 0,38× của 12.000 đ [sim]\n\n2) Nửa khối lượng (22.500 yc/tháng — lúc pilot 50%):\n   Việc TC/tháng = 16.875 việc → Cố định/việc = 2.370 đ\n   CPS + cố định = 3.414 + 2.370 = 5.784 đ = 0,48× của 12.000 đ [sim]',
+      why: 'Chi phí vận hành cố định 40 triệu đ/tháng (hạ tầng, bảo trì, kỹ sư trực) không giảm khi khối lượng nhỏ. Ở 45.000 yc/tháng khoản này rất nhẹ (1.185 đ), nhưng lúc pilot khối lượng thấp nó tăng vọt gấp đôi (2.370 đ).',
+      cases: [
+        'Phạm vi gồm <strong>824 ca <code>noi_dia</code></strong> (783 thành công) + <strong>158 ca <code>hang_nang</code></strong> (117 thành công) = <strong>900 việc thành công</strong> trong mẫu 1.200.',
+        'Nếu khối lượng giảm xuống dưới 50% kế hoạch (< 3.900 việc thành công/tuần), rủi ro kinh tế #3 trong <code>chi_so.md</code> kích hoạt hành động dừng mở rộng và đàm phán lại phí cố định.'
+      ],
+      qa: 'Hồ sơ luôn ghi rõ con số nào ĐÃ cộng cố định (4.599 đ / 5.784 đ) và con số nào CHƯA cộng cố định (4.472 đ toàn mẫu / 3.414 đ phạm vi).'
+    },
+
+    cost_breakdown: {
+      badge: '<span class="badge badge-sim">A2 · Cơ cấu chi phí & chạy lại</span>',
+      title: '92,5% giờ nhân viên (51,8% làm lại + 40,7% xem lại) & 93.804 đ chạy lại',
+      formula: 'Làm lại: 1.132 phút × 2.000 đ = 2.264.000 đ (51,8% tổng) [simulated]\nXem lại:   890 phút × 2.000 đ = 1.780.000 đ (40,7% tổng) [simulated]\nToken:     245.585 đ (5,6%)  +  Tool: 84.000 đ (1,9%)    [đo từ trace]\nTrong đó 424 lần chạy lại (attempt = 2, 3): 93.804 đ     [đo từ trace]',
+      why: 'Dù chỉ có 74 ca <code>lam_lai</code> (6,2% yêu cầu), mỗi ca làm lại tốn trung bình <strong>15,3 phút</strong> (30.600 đ/ca!) nên làm lại chiếm hơn nửa tổng chi phí. 177 ca <code>duoc_xem_lai</code> tốn trung bình ~5,03 phút/ca.',
+      cases: [
+        '<strong>Làm lại (74 ca, 1.132 phút):</strong> VD <code>RF-70028</code> (noi_dia, 12 phút, mở lại 7 ngày), <code>RF-70033</code> (hang_nang, 25 phút, mở lại 7 ngày).',
+        '<strong>Xem lại (177 ca, 890 phút):</strong> 129 ca <code>giu</code>, 41 ca <code>sua</code> (VD: <code>RF-70012</code> 4p, <code>RF-70017</code> 15p), 7 ca <code>bo</code>.',
+        '<strong>424 lần chạy lại (93.804 đ):</strong> <code>quoc_te</code> 198 lần (46.218 đ = 49,3%), <code>noi_dia</code> 92 lần (19.119 đ), <code>hang_nang</code> 74 lần (15.618 đ), <code>doi_tac</code> 60 lần (12.848 đ).'
+      ],
+      qa: 'Vì 92,5% chi phí đang nằm ở hai cột <code>_simulated</code>, điều kiện #3 của Gate 2a bắt buộc bật log thời gian thật sau tuần 1 pilot để kiểm chứng lại toàn bộ mô hình kinh tế.'
+    },
+
+    loai_noidia: {
+      badge: '<span class="badge badge-ok">A3 · CHỌN VÀO PILOT [simulated]</span>',
+      title: 'noi_dia: 2.696 đ/việc thành công = 0,22× (95,0% thành công)',
+      formula: 'Tổng mẫu: 824 yêu cầu (68,7% toàn bộ lưu lượng) · 916 lần chạy (1,11 lần/yc)\nThành công: 783 / 824 = 95,0%\nCPS = mo_hinh(runs, reqs[loai == "noi_dia"])["cps"] = 2.696 đ = 0,22× của 12.000 đ [simulated]\n(Gộp cùng hang_nang: tổng 3.072.513 đ ÷ 900 việc thành công = 3.414 đ)',
+      why: 'Quy trình đơn nội địa chuẩn hoá, dữ liệu đầy đủ nên 91,0% thành công ngay lần 1, rất ít chuyển nhân viên (11 ca) và ít làm lại (30 ca). Đây là xương sống tạo ra lợi ích kinh tế của trợ lý.',
+      cases: [
+        '<strong>783 ca <code>thanh_cong</code></strong> (VD: <code>RF-70002</code>, <code>RF-70003</code>, <code>RF-70012</code>).',
+        '<strong>11 ca <code>chuyen_nhan_vien</code></strong> (chỉ 1,3%).',
+        '<strong>30 ca <code>lam_lai</code></strong> (3,6%, VD: <code>RF-70028</code> tốn 12 phút làm lại và khách mở lại sau 7 ngày).',
+        'Chạy lại vẫn còn hiệu quả nhất định: lần 1 ok 91,0%, lần 2 ok 75,7%, lần 3 ok 38,9%.'
+      ],
+      qa: 'Nếu trong pilot chi phí vượt 8.000 đ trong 2 tuần liên tiếp (luật dừng chi phí), PM sẽ thu hẹp pilot về duy nhất <code>noi_dia</code> để bảo toàn hiệu quả.'
+    },
+
+    loai_hangnang: {
+      badge: '<span class="badge badge-ok">A3 · CHỌN VÀO PILOT [simulated]</span>',
+      title: 'hang_nang: 8.221 đ/việc thành công = 0,69× (74,1% thành công)',
+      formula: 'Tổng mẫu: 158 yêu cầu (13,2% lưu lượng) · 232 lần chạy (1,47 lần/yc)\nThành công: 117 / 158 = 74,1%\nCPS = mo_hinh(runs, reqs[loai == "hang_nang"])["cps"] = 8.221 đ = 0,69× của 12.000 đ [simulated]\n(Gộp cùng noi_dia: tổng 3.072.513 đ ÷ 900 việc thành công = 3.414 đ)',
+      why: 'Vẫn rẻ hơn đáng kể so với nhân viên tự làm (0,69×), nhưng biên lợi nhuận mỏng hơn <code>noi_dia</code> nhiều vì tỉ lệ làm lại cao hơn (18/158 = 11,4%) và chạy lại giảm hiệu quả nhanh (lần 1: 70,9% → lần 2: 39,1% → lần 3: 17,9%).',
+      cases: [
+        '<strong>117 ca <code>thanh_cong</code></strong> (VD: <code>RF-70001</code>, <code>RF-70005</code>, <code>RF-70010</code>).',
+        '<strong>23 ca <code>chuyen_nhan_vien</code></strong> (14,6%).',
+        '<strong>18 ca <code>lam_lai</code></strong> (11,4%, VD: <code>RF-70033</code> 738.000 đ tốn 25 phút làm lại và bị mở lại trong 7 ngày).',
+        'Liên hệ Google PAIR <strong>Ca 2 (Hệ thống)</strong>: agent tự suy hàng 28 kg là hàng thường khi gọi tool tra giá — đã có cơ chế chặn đọc trực tiếp từ vận đơn.'
+      ],
+      qa: 'Nếu rủi ro làm lại tăng hoặc CPS vượt 8.000 đ, <code>hang_nang</code> là nhóm đầu tiên bị rút khỏi phạm vi theo luật dừng #2.'
+    },
+
+    loai_doitac: {
+      badge: '<span class="badge badge-sim">A3 · LOẠI KHỎI PILOT [simulated]</span>',
+      title: 'doi_tac: 10.215 đ/việc thành công = 0,85× (54,4% thành công)',
+      formula: 'Tổng mẫu: 68 yêu cầu (5,7% lưu lượng) · 128 lần chạy (1,88 lần/yc)\nThành công: 37 / 68 = 54,4%\nCPS ≈ 10.215 đ = 0,85× của 12.000 đ [simulated]',
+      why: 'Sát ngưỡng hoà vốn 12.000 đ (chưa tính chi phí cố định; cộng cố định sẽ sát hoặc vượt 12.000 đ), tỉ lệ thành công chỉ 54,4% và khách đối tác có điều khoản hợp đồng riêng rủi ro tranh chấp cao.',
+      cases: [
+        '<strong>37 ca <code>thanh_cong</code></strong> (VD: <code>RF-70017</code> phải sửa mất 15 phút xem lại, <code>RF-70036</code>).',
+        '<strong>23 ca <code>chuyen_nhan_vien</code></strong> (33,8% — cứ 3 đơn có 1 đơn phải đẩy về CSKH, VD: <code>RF-70039</code> chạy 3 lần vẫn lỗi).',
+        '<strong>8 ca <code>lam_lai</code></strong> (11,8%).',
+        'Lần 2 chỉ còn 18,2% ok, lần 3 còn 14,8% ok.'
+      ],
+      qa: 'Loại <code>doi_tac</code> chỉ bỏ đi 5,7% lưu lượng nhưng loại bỏ được nguồn rủi ro hợp đồng đặc thù và chi phí biên sát 1,0×.'
+    },
+
+    loai_quocte: {
+      badge: '<span class="badge badge-warn">A3 · LOẠI KHỎI PILOT [simulated]</span>',
+      title: 'quoc_te: 22.515 đ/việc thành công = 1,88× — Càng chạy lại càng lỗ',
+      formula: 'Tổng mẫu: 150 yêu cầu (12,5% lưu lượng) · 348 lần chạy (2,32 lần/yc)\nThành công: chỉ 41 / 150 = 27,3%\nCPS ≈ 22.515 đ = 1,88× của 12.000 đ (ĐẮT GẦN GẤP ĐÔI nhân viên tự làm) [simulated]\nTỉ lệ ok theo lần thử: Lần 1 = 30,0% → Lần 2 = 11,4% → Lần 3 = 2,2%',
+      why: 'Đơn quốc tế thiếu dữ liệu hải quan/đối tác ngoại tuyến — đây là lỗi <strong>Giới hạn hệ thống</strong> lặp lại trên cùng một yêu cầu. Cho agent chạy lại tới 3 lần hoàn toàn không cứu được (lần 3 chỉ đúng 2,2%) mà còn đốt gần một nửa tiền chạy lại của cả công ty.',
+      cases: [
+        '<strong>91 ca <code>chuyen_nhan_vien</code> (60,7%):</strong> chạy hết 3 lần vẫn thất bại (VD: <code>RF-70008</code> 1.269.000 đ, <code>RF-70020</code> 318.000 đ, <code>RF-70035</code> 175.000 đ).',
+        '<strong>18 ca <code>lam_lai</code> (12,0%)</strong> và chỉ <strong>41 ca <code>thanh_cong</code> (27,3%)</strong>.',
+        'Riêng <code>quoc_te</code> chiếm <strong>198 / 424 lần chạy lại</strong>, đốt <strong>46.218 đ = 49,3%</strong> tổng chi phí chạy lại của toàn mẫu.',
+        'Liên hệ Google PAIR <strong>Ca 4 (Giới hạn hệ thống)</strong>: thiếu dữ liệu đối tác quốc tế → chuyển thẳng nhân viên kèm tóm tắt, loại khỏi pilot.'
+      ],
+      qa: 'Đây là lý do số 1 giúp nhóm đạt tối đa 10/10 tiêu chí C7 (thu hẹp phạm vi có lý do định lượng sắc bén).'
+    },
+
+    sens_b1_b2: {
+      badge: '<span class="badge badge-sim">B1 &amp; B2 · Độ nhạy tuyến tính [simulated]</span>',
+      title: '9 kịch bản đơn yếu tố (B1) & cặp đổi đồng thời (B2)',
+      formula: 'Gốc A2 = 4.472 đ [simulated]. Đổi từng tham số trong mo_hinh():\n1. Làm lại ×2 / ÷2:     6.787 đ (+51,8%) / 3.315 đ (−25,9%)\n2. Xem lại ×2 / ÷2:     6.292 đ (+40,7%) / 3.562 đ (−20,3%)\n3. Lương +25% (2.500đ): 5.506 đ (+23,1%)\n4. Tối đa 1 / 2 lần:    4.111 đ (−8,1%)  / 4.237 đ (−5,2%)\n5. Token ×2 / ÷2:       4.723 đ (+5,6%)  / 4.346 đ (−2,8%)\n\nB2 (Token ×2 + Xem lại ×2): 6.543 đ (+46,3%) = +5,6% + 40,7%',
+      why: 'Vì mô hình chi phí là tổng tuyến tính <code>(token + tool + xem_lai + lam_lai) / thanh_cong</code>, phần trăm thay đổi khi nhân đôi một khoản đúng bằng tỉ trọng của khoản đó trong tổng chi phí (làm lại 51,8%, xem lại 40,7%, token 5,6%). Tương tự, giảm một nửa giảm đúng bằng nửa mức tăng.',
+      cases: [
+        '<strong>Bài học quản trị:</strong> Đàm phán giảm nửa giá model LLM chỉ tiết kiệm được <strong>−2,8%</strong> (−126 đ/việc), trong khi giảm nửa số ca làm lại tiết kiệm tới <strong>−25,9%</strong> (−1.157 đ/việc) — gấp <strong>9 lần</strong>!',
+        '<strong>Kiểm chứng B2:</strong> Token ×2 (+251 đ) + Xem lại ×2 (+1.820 đ) = +2.071 đ → <code>4.472 + 2.071 = 6.543 đ (+46,3%)</code>, khớp tuyệt đối tính cộng tuyến tính.'
+      ],
+      qa: 'Hội đồng rất thích hỏi: "Tại sao cộng hai tác động riêng lại ra đúng tác động của cặp?". Trả lời: mẫu số (978 việc thành công) không đổi và tử số là tổng tuyến tính không có số hạng tương tác giữa giá token và giờ xem lại.'
+    },
+
+    b3_cap2: {
+      badge: '<span class="badge badge-ok">B3 · Tối ưu cả hệ thống [simulated]</span>',
+      title: 'Vì sao giới hạn 2 lần chạy (6.901.220 đ) rẻ nhất cho công ty?',
+      formula: 'Chi phí cả hệ thống = Tổng chi phí trợ lý + 12.000 đ × (1.200 − thanh_cong)\n• Tối đa 1 lần: 3.621.781 + 319 × 12.000 = 7.449.781 đ (CPS = 4.111 đ — thấp nhất)\n• Tối đa 2 lần: 4.093.220 + 234 × 12.000 = 6.901.220 đ (RẺ NHẤT CẢ CÔNG TY)\n• Tối đa 3 lần: 4.373.585 + 222 × 12.000 = 7.037.585 đ (CPS = 4.472 đ)',
+      why: 'Đây là bẫy kinh tế kinh điển: tối ưu riêng chỉ số cục bộ (CPS thấp nhất ở 1 lần = 4.111 đ) lại làm tổng chi phí của cả công ty TĂNG thêm 548.561 đ vì đẩy 85 yêu cầu có thể giải quyết ở lần 2 sang nhân viên (tốn 12.000 đ/ca). Ngược lại, cho chạy lần 3 chỉ cứu thêm được 12 ca (tiết kiệm 144.000 đ nhân viên) nhưng tốn thêm 280.365 đ chi phí trợ lý → lỗ ròng 136.365 đ!',
+      cases: [
+        '<strong>Từ 1 → 2 lần chạy:</strong> Cứu thêm được <strong>85 ca thành công</strong> (881 → 966), giảm ca chuyển nhân viên từ 319 xuống 234 → tiết kiệm <code>85 × 12.000 = 1.020.000 đ</code> công nhân viên trong khi chỉ tốn thêm <code>471.439 đ</code> ở trợ lý → <strong>lãi ròng 548.561 đ</strong>.',
+        '<strong>Từ 2 → 3 lần chạy:</strong> Chỉ cứu thêm được <strong>12 ca thành công</strong> (966 → 978) → tiết kiệm <code>144.000 đ</code> công nhân viên nhưng tốn thêm <code>280.365 đ</code> ở trợ lý → <strong>lỗ ròng 136.365 đ</strong>.'
+      ],
+      qa: 'Nhóm đưa luôn cấu hình <strong>giới hạn tối đa 2 lần chạy</strong> vào điều kiện pilot và luật dừng chi phí!'
+    },
+
+    b4_fullreview: {
+      badge: '<span class="badge badge-warn">B4 · Bẫy xem lại 100% [simulated]</span>',
+      title: 'Xem lại 100% ở noi_dia + hang_nang: 11.743 đ (0,98×) và 12.415 đ (1,03×)',
+      formula: 'Phạm vi noi_dia + hang_nang (982 yêu cầu · 900 việc thành công):\n• 948 yêu cầu có ≥ 1 lần chạy ok × 5 phút × 2.000 đ = 9.480.000 đ (90% tổng!)\n• Token + tool mọi lần chạy của 982 yêu cầu         =   224.513 đ\n\nKịch bản 1 (làm lại 9 phút theo đề):\n• 48 ca lam_lai × 9 phút × 2.000 đ                  =   864.000 đ\n• Tổng = 10.568.513 đ ÷ 900 = 11.743 đ = 0,98× [sim] | Hoà vốn xem lại ≤ 5,1 phút\n\nKịch bản 2 (làm lại TB dữ liệu 15,3 phút — trung vị 14,5p):\n• 48 ca lam_lai × 15,297 phút × 2.000 đ             = 1.468.541 đ\n• Tổng = 11.173.054 đ ÷ 900 = 12.415 đ = 1,03× [sim] | Hoà vốn xem lại ≤ 4,8 phút',
+      why: 'Khi bắt buộc nhân viên xem lại 100% gợi ý (mỗi lần 5 phút = 10.000 đ), chỉ riêng tiền xem lại đã gần bằng tiền nhân viên tự làm từ đầu (12.000 đ). Cộng thêm chi phí 48 ca làm lại, trợ lý gần như không tiết kiệm hoặc thậm chí ĐẮT HƠN nhân viên tự làm.',
+      cases: [
+        '<strong>948 yêu cầu có ít nhất 1 lần chạy <code>status == ok</code></strong> trong 982 yêu cầu phạm vi (34 ca còn lại bị lỗi cả 3 lần và chuyển nhân viên nên không có gợi ý để xem lại).',
+        '<strong>48 ca <code>lam_lai</code></strong> = 30 ca <code>noi_dia</code> + 18 ca <code>hang_nang</code>.',
+        '<strong>Công thức mức hoà vốn (CPS = 12.000 đ):</strong> <code>(12.000×900 − 224.513 − tiền_làm_lại) ÷ (948×2.000)</code> → <strong>5,12 phút</strong> (với 9p) và <strong>4,80 phút</strong> (với 15,3p).'
+      ],
+      qa: 'Đây là câu hỏi hội đồng chắc chắn sẽ hỏi! Nhóm trả lời thẳng cả 2 kịch bản (0,98× và 1,03×) và chỉ vào Điều kiện #4: pilot phải học được cách giảm tỉ lệ xem lại theo bậc khi <code>sua + bo < 15%</code> và rút ngắn thời gian xem lại dưới 4,8 phút.'
+    },
+
+    err_35pct: {
+      badge: '<span class="badge badge-warn">CP3 · Thống kê logix_runs.csv</span>',
+      title: '35,2% lần chạy lỗi (572 / 1.624 lần · tốn 123.179 đ)',
+      formula: 'status == "loi": 572 / 1.624 = 35,22% ≈ 35,2%\nToken + tool của riêng 572 lần lỗi = 123.179 đ [đo từ trace]\nChiếm 123.179 ÷ 329.585 = 37,4% tổng hoá đơn token + tool!',
+      why: 'Hơn một phần ba số lần gọi agent trả về lỗi, đốt hơn 37% tổng hoá đơn token + tool. Đó là lý do ở A2 bắt buộc cộng MỌI lần chạy (kể cả lần lỗi) vào tử số chi phí.',
+      cases: [
+        'Phần lớn các lần lỗi tập trung ở <code>quoc_te</code> (198 lần chạy lại) và <code>doi_tac</code> (60 lần chạy lại).',
+        'Khi loại <code>quoc_te</code> và <code>doi_tac</code> khỏi phạm vi pilot và giới hạn tối đa 2 lần chạy, phần lớn lượng token đốt vô ích này biến mất ngay lập tức.'
+      ],
+      qa: 'Con số 123.179 đ đo trực tiếp từ <code>logix_runs.csv</code>, không dùng cột <code>_simulated</code>.'
+    },
+
+    err_reopen51: {
+      badge: '<span class="badge badge-warn">CP3 &amp; E1 · Chỉ số an toàn</span>',
+      title: '51 / 51 ca mở lại trong 7 ngày đều là ca lam_lai (4,25% toàn mẫu · 3,97% phạm vi)',
+      formula: 'Toàn mẫu (1.200 yc):       51 / 1.200 = 4,25%\nPhạm vi pilot (982 yc):    39 / 982   = 3,97%\nTỉ lệ mở lại theo ket_qua:\n  • thanh_cong (978 ca):       0 / 978 = 0,0% (theo định nghĩa)\n  • chuyen_nhan_vien (148 ca): 0 / 148 = 0,0%\n  • lam_lai (74 ca):          51 / 74  = 68,9% (~69%)',
+      why: 'Phát hiện đắt giá nhất của mảng phân tích lỗi: <strong>100% lỗi lọt đến khách (khách mở lại ticket trong 7 ngày) đều nằm ở nhóm <code>lam_lai</code></strong> — nhóm đồng thời chiếm 51,8% tổng chi phí. Giảm <code>lam_lai</code> giải quyết cùng lúc cả bài toán kinh tế lẫn an toàn khách hàng!',
+      cases: [
+        '<strong>Trong phạm vi pilot (39 ca mở lại / 48 ca làm lại):</strong> VD <code>RF-70028</code> (<code>noi_dia</code>, 92.000 đ, 12p làm lại, mở lại = 1), <code>RF-70033</code> (<code>hang_nang</code>, 738.000 đ, 25p làm lại, mở lại = 1).',
+        '<strong>Ngoài phạm vi (12 ca mở lại / 26 ca làm lại):</strong> thuộc <code>quoc_te</code> và <code>doi_tac</code>.',
+        '<strong>Lưu ý lỗi Ngầm:</strong> Chỉ số mở lại KHÔNG bắt được các ca sai mà khách không biết (Ca 5, 12, 17) — nên nhóm bổ sung thêm chỉ số kiểm tra mẫu 100 đơn/tuần của kế toán.'
+      ],
+      qa: 'Hội đồng hay hỏi: "Tại sao không đặt luật dừng an toàn là mở lại > 3%?". Trả lời: nền hiện tại đã là 3,97% trong phạm vi (4,25% toàn mẫu), đặt 3% sẽ làm pilot dừng giả ngay tuần 1!'
+    },
+
+    err_agreement: {
+      badge: '<span class="badge badge-ok">CP3 · Liêm chính &amp; Thống nhất 20 ca</span>',
+      title: 'Đồng thuận 12/20 (60%) → Viết lại định nghĩa → Chốt 20/20',
+      formula: 'Trùng 12/20 (60%): Ca 1, 2, 3, 4, 5, 8, 9, 10, 11, 14, 16, 19\nLệch   8/20 (40%): Ca 6, 7, 12, 13, 15, 17, 18, 20\nQuy tắc RULES.md: KHÔNG sửa cột độc lập; vì < 80% nên viết lại định nghĩa trước khi thống nhất.',
+      why: 'Nhóm tuân thủ tuyệt đối liêm chính: hai bạn gắn tay độc lập không dùng AI, không sửa ngược cột gốc sau khi so. Khi thấy đồng thuận 60% (< 80%), hai bạn chỉ ra đúng 2 ranh giới bị nhầm (Hệ thống vs Giới hạn hệ thống; Ngầm vs lỗi đã lộ ra), viết lại định nghĩa rồi thống nhất chính xác cả 8 ca lệch.',
+      cases: [
+        '<strong>Ca 6:</strong> N1 Do người dùng / N2 Ngầm → <strong>Do người dùng</strong> (khách chọn sai mục giao trễ cho hàng vỡ; khách thấy ngay nên không phải Ngầm).',
+        '<strong>Ca 7:</strong> N1 Giới hạn / N2 Hệ thống → <strong>Hệ thống</strong> (báo "đã hoàn" khi sổ cái lỗi 503 là lỗi thiết kế, sửa code được).',
+        '<strong>Ca 12:</strong> N1 Ngầm / N2 Hệ thống → <strong>Ngầm</strong> (kết quả đúng nhưng token depot D05 gấp 3× suốt 3 tuần không ai thấy).',
+        '<strong>Ca 13:</strong> N1 Giới hạn / N2 Hệ thống → <strong>Giới hạn hệ thống</strong> (bảo hiểm đối tác ngoài phạm vi).',
+        '<strong>Ca 15:</strong> N1 Giới hạn / N2 Hệ thống → <strong>Hệ thống</strong> (tính 100% thay vì 50%, vi phạm chính sách và nhân viên bắt được).',
+        '<strong>Ca 17:</strong> N1 Ngầm / N2 Hệ thống → <strong>Ngầm</strong> (lệch 1–2k trên 212 đơn trong 9 ngày không ai biết).',
+        '<strong>Ca 18:</strong> N1 Ngữ cảnh / N2 Ngầm → <strong>Ngữ cảnh</strong> (đúng chính sách nhưng khách không hiểu cách tính và đã mở lại).',
+        '<strong>Ca 20:</strong> N1 Giới hạn / N2 Hệ thống → <strong>Hệ thống</strong> (hoàn tiền 2 lần vì thiếu khoá chống trùng idempotency).'
+      ],
+      qa: 'Thẳng thắn nhận đồng thuận 60% kèm định nghĩa đã viết lại theo đúng quy trình kiểm soát của đề bài đáng tin cậy hơn nhiều so với việc gian lận sửa nhãn cho thành 100%.'
+    },
+
+    err_depot12: {
+      badge: '<span class="badge badge-info">CP3 · Ca 12 (Lỗi Ngầm về chi phí)</span>',
+      title: 'Nền chi phí token+tool theo depot: 259–287 đ/yc (chênh tối đa 11%)',
+      formula: 'Tính từ logix_runs.csv ghép logix_requests.csv theo 6 depot D01–D06:\n• Depot thấp nhất: 258,6 đ/yêu cầu (~259 đ)\n• Depot cao nhất:  287,2 đ/yêu cầu (~287 đ)\n• Chênh lệch lớn nhất: (287,2 / 258,6 − 1) = 11,0%',
+      why: 'Trong Ca 12, câu trả lời hoàn tiền vẫn ĐÚNG nên không khách nào mở lại, nhưng depot D05 tốn gấp 3 lần chi phí token suốt 3 tuần. Vì nền giữa các depot bình thường chỉ chênh tối đa 11%, ngưỡng cảnh báo <strong>&gt; 1,5× trung vị tuần</strong> bắt ngay lỗi ngầm chi phí mà không gây báo động giả.',
+      cases: [
+        'Event dùng để đo: <code>agent_run_completed</code> (có thuộc tính <code>depot</code>, <code>tokens_in</code>, <code>tokens_out</code>, <code>tool_calls</code>, <code>trace_id</code>).',
+        'Phụ trách xử lý: <strong>Kỹ sư trưởng agent</strong> — sửa tool tra đơn trả lỗi rõ để agent không rơi vào vòng lặp gọi lại.'
+      ],
+      qa: 'Điểm mấu chốt của Ca 12: "lỗi" trong agent không chỉ là trả lời sai, mà còn là <strong>sai ngầm về chi phí</strong>!'
+    },
+
+    d1_1251: {
+      badge: '<span class="badge badge-info">CP4 · D1 câu a &amp; b (Công thức &amp; NormalIndPower)</span>',
+      title: 'Cỡ mẫu chia theo yêu cầu: 1.251/nhóm (b: cần 3.103 → 84 > 40 NV)',
+      formula: 'p1 = 0,70 · p2 = 0,75 (MDE = +5 điểm) · α = 0,05 (z = 1,960) · power = 0,80 (z = 0,842)\np̄ = 0,725\n\nCâu a) Chia theo yêu cầu:\n  n = [z_α √(2p̄(1−p̄)) + z_β √(p1(1−p1)+p2(1−p2))]² ÷ (0,05)² = 1.251 / nhóm\n  Kiểm chứng statsmodels NormalIndPower (Cohen\'s h): 1.250 / nhóm (lệch 0,08%)\n\nCâu b) Chia theo nhân viên, m = 75 yc/NV, ICC = 0,02:\n  DE = 1 + (75 − 1) × 0,02 = 2,48\n  n_cluster = ceil(1.251 × 2,48) = 3.103 / nhóm\n  Số NV/nhóm = ceil(3.103 / 75) = 42 NV → Tổng 84 NV > 40 NV hiện có!',
+      why: 'Chia theo từng yêu cầu đủ mẫu rất nhanh (1.251/nhóm ≈ 2 ngày), nhưng cùng một nhân viên vừa dùng trợ lý ở đơn này vừa làm tay ở đơn khác → tràn tác động (spillover) cực mạnh, kết quả thử nghiệm mất độ tin cậy.',
+      cases: [
+        '<strong>Case chia theo yêu cầu (loại):</strong> Đủ mẫu nhưng không tách được tác động.',
+        '<strong>Case chia theo nhân viên với m = 75 (không khả thi):</strong> Cần 84 nhân viên trong khi cả LogiX-VN chỉ có 40 nhân viên CSKH.'
+      ],
+      qa: 'Công thức kiểm chứng cả 2 cách (công thức chuẩn z = 1.251 và <code>statsmodels.NormalIndPower</code> = 1.250) đều chạy tự động trong <code>src/lab13.py</code>.'
+    },
+
+    d1_caps: {
+      badge: '<span class="badge badge-warn">CP4 · D1 câu c &amp; d (Giới hạn cụm c / ICC)</span>',
+      title: 'Trần cỡ mẫu hiệu dụng: 1.000 (20 NV) & 300 (6 depot)',
+      formula: 'DE = 1 + (m − 1) × ICC\nn_hiệu_dụng = (c × m) ÷ [1 + (m − 1) × ICC]  <  c ÷ ICC  (khi m → ∞)\n\n• Câu c) 20 nhân viên/nhóm:  n_eff_max = 20 ÷ 0,02 = 1.000  (< 1.251 → KHÔNG ĐẠT 5 điểm)\n• Câu d) 6 depot/nhóm:       n_eff_max =  6 ÷ 0,02 =   300  (< 1.251 → KHÔNG ĐẠT; chỉ 6 cụm < 20)',
+      why: 'Khi chia theo cụm, các yêu cầu do cùng một nhân viên/depot xử lý có tương quan nội cụm (<code>ICC = 0,02</code>). Vì vậy dù bạn chạy pilot dài 10 năm (<code>m → ∞</code>), thông tin độc lập thu thêm ngày càng ít và KHÔNG BAO GIỜ vượt qua trần <code>c / ICC</code>. <strong>Số cụm <code>c</code> mới là nút thắt quyết định, không phải tổng số yêu cầu!</strong>',
+      cases: [
+        '<strong>Case 6 + 6 depot (LOẠI NGAY):</strong> Vừa quá ít cụm (6 < ngưỡng 20 cụm), vừa có trần mẫu hiệu dụng chỉ 300 — dù kéo dài bao lâu cũng vô ích.',
+        '<strong>Case 20 + 20 nhân viên (CHỌN):</strong> Đạt đúng ngưỡng 20 cụm/nhóm để tách tác động, nhưng phải chấp nhận nới MDE từ 5 điểm lên 6 điểm (cần 859 < 1.000).'
+      ],
+      qa: 'Đây là một trong 3 câu bắt buộc phải tự giải thích được theo <code>RULES.md</code>: "cách tính cỡ mẫu hiệu dụng khi chia theo cụm".'
+    },
+
+    d1_mde6: {
+      badge: '<span class="badge badge-sim">CP4 · D1 câu e (Đánh đổi minh bạch)</span>',
+      title: 'MDE 6 điểm: n = 859 · m ≥ 299 · DE = 6,96 · Power ở 5 điểm = 0,64',
+      formula: 'Với p1 = 0,70, p2 = 0,76 (MDE = +6 điểm): n_6pt = 859 / nhóm (NormalIndPower: 858)\n\nGiải bất phương trình tìm m (số yêu cầu mỗi nhân viên, c = 20, ICC = 0,02):\n  20m ÷ [1 + (m − 1) × 0,02] ≥ 859\n  ⇔ 20m ≥ 859 × (0,98 + 0,02m) = 841,82 + 17,18m\n  ⇔ 2,82m ≥ 841,82  ⇒  m ≥ 298,52  ⇒  m = 299 yêu cầu / nhân viên\n  DE = 1 + (299 − 1) × 0,02 = 6,96\n\nKiểm tra con số bất lợi (nếu tác động thật chỉ là +5 điểm với n_eff = 859):\n  NormalIndPower().power(effect_size(0.75, 0.70), nobs1=859, alpha=0.05) = 0,64',
+      why: 'Vì 20 nhân viên/nhóm có trần 1.000, nhóm không thể đo mức chênh 5 điểm ở power 0,80. Nới MDE lên 6 điểm đưa yêu cầu xuống 859 (< 1.000) nên khả thi trong ~4 tuần (2 tuần tăng tốc 10%→25% + ~2 tuần đo ở mức 50% với ~30,7 yc/NV/ngày). Tuy nhiên phải công khai con số bất lợi: nếu tác động thật chỉ +5 điểm, xác suất phát hiện ra chỉ còn 64% (36% nguy cơ bỏ lỡ).',
+      cases: [
+        '<strong>Case tác động thật ≥ +6 điểm:</strong> Pilot đạt đủ power 80%, ra quyết định tin cậy.',
+        '<strong>Case tác động thật = +5 điểm:</strong> Power còn <strong>0,64</strong> → Giám đốc vận hành bắt buộc ký chấp nhận rủi ro đánh đổi này trước khi chạy (Điều kiện #2 của Gate 2a).'
+      ],
+      qa: 'Theo Rubric C6, nêu công khai con số bất lợi <code>power = 0,64</code> kèm cách xử lý (xin ký chấp nhận từ Giám đốc vận hành) giúp nhóm đạt trọn 10/10 điểm hội đồng!'
+    },
+
+    d3_stoprules: {
+      badge: '<span class="badge badge-warn">CP4 · D3 (Luật dừng 4 vế &amp; nền an toàn)</span>',
+      title: 'Nền mở lại 3,97% / 4,25% & 3 luật dừng NẾU–TRONG–THÌ–KHÔNG THÌ',
+      formula: 'Tỉ lệ mo_lai_trong_7_ngay hiện tại:\n• Toàn mẫu (1.200 yc): 51 / 1.200 = 4,25%\n• Phạm vi pilot (982): 39 / 982   = 3,97%\n\n⇒ Luật an toàn: chênh ≥ +2 điểm so với đối chứng HOẶC vượt trần cứng 6%, HOẶC ≥ 1 ca hoàn trùng',
+      why: 'Một lỗi cực phổ biến là đặt ngưỡng dừng theo cảm tính (VD: "mở lại > 3% thì dừng") mà quên nhìn dữ liệu nền. Vì nền hiện tại đã là 3,97%, ngưỡng 3% sẽ làm pilot tự tắt ngay tuần đầu dù trợ lý không tệ hơn đối chứng!',
+      cases: [
+        '<strong>Luật 1 (An toàn):</strong> So trực tiếp nhóm trợ lý vs nhóm đối chứng cùng tuần (+2 điểm) + trần 6% + 0 dung thứ hoàn trùng → <strong>Giám đốc vận hành</strong> tắt cờ trong 30 phút.',
+        '<strong>Luật 2 (Chi phí):</strong> CPS &gt; 8.000 đ trong 2 tuần → <strong>PM</strong> cắt <code>hang_nang</code> về chỉ <code>noi_dia</code> &amp; khoá 2 lần chạy.',
+        '<strong>Luật 3 (Sử dụng):</strong> Bỏ qua gợi ý &gt; 40% trong 1 tuần (nền phạm vi hiện 21,09%) → <strong>Trưởng nhóm CSKH</strong> phỏng vấn 5 nhân viên trong 3 ngày, cấm tăng rollout.'
+      ],
+      qa: 'Cả 3 luật đều có đủ 4 vế <strong>NẾU – TRONG – THÌ – KHÔNG THÌ</strong>, có người có quyền dừng cụ thể (không ghi "cả đội") và cơ chế rollback trong 30 phút về luồng nhân viên tự làm.'
+    },
+
+    e1_8283: {
+      badge: '<span class="badge badge-ok">CP5 · E1 (Chỉ số chính đợt chạy thử)</span>',
+      title: 'Chỉ số chính đợt chạy thử: 82,83% toàn mẫu · 92,26% phạm vi pilot',
+      formula: 'Công thức: mean((dong_trong_24h == 1) & (mo_lai_trong_7_ngay == 0))\n• Toàn mẫu:   994 / 1.200 = 82,83%\n• Phạm vi PV: 906 / 982   = 92,26%\nEvent đo trong pilot: refund_request_created + ticket_closed (≤24h) + ticket_reopened (7 ngày)',
+      why: 'Mức 82,83% toàn mẫu bị kéo xuống bởi <code>quoc_te</code> và <code>doi_tac</code> (nhiều ca <code>chuyen_nhan_vien</code> không đóng kịp 24h). Trong phạm vi pilot <code>noi_dia</code> + <code>hang_nang</code>, chỉ số đạt 92,26%.',
+      cases: [
+        '<strong>994 ca đạt</strong> trong 1.200 yêu cầu (gồm 906 ca trong phạm vi pilot và 88 ca ở <code>quoc_te</code> + <code>doi_tac</code>).',
+        '<strong>206 ca không đạt</strong> gồm các ca quá 24h mới đóng (chủ yếu <code>chuyen_nhan_vien</code> như <code>RF-70008</code>, <code>RF-70020</code>) hoặc bị mở lại trong 7 ngày (51 ca <code>lam_lai</code> như <code>RF-70028</code>, <code>RF-70033</code>).'
+      ],
+      qa: '<strong>Cấm kỵ tuyệt đối:</strong> Chỉ được nói "chỉ số trong đợt chạy thử là 82,83%", KHÔNG nói "trợ lý đã nâng từ 0,70 lên 82,83%" vì đợt chạy thử không có nhóm đối chứng chạy cùng thời gian!'
+    },
+
+    e1_2712: {
+      badge: '<span class="badge badge-sim">CP5 · E1 (Chỉ số sử dụng)</span>',
+      title: 'Tỉ lệ bỏ qua gợi ý: 27,12% (48/177) · Phạm vi pilot: 21,09% (27/128)',
+      formula: 'Lọc duoc_xem_lai == 1:\n• Toàn mẫu: 177 ca (129 giu · 41 sua · 7 bo) → (41 + 7) ÷ 177 = 27,12%\n• Phạm vi:  128 ca → 27 ÷ 128 = 21,09%\nEvent đo trong pilot: staff_review_decision (quyet_dinh ∈ {giu, sua, bo})',
+      why: 'Phản ánh độ tin cậy thực tế của nhân viên CSKH đối với gợi ý của trợ lý. Nếu nhân viên phải sửa/bỏ quá nhiều (> 40% ở luật dừng #3), trợ lý không giảm tải mà còn làm mất thêm thời gian.',
+      cases: [
+        '<strong>41 ca <code>sua</code></strong> (VD: <code>RF-70012</code> noi_dia 4 phút, <code>RF-70017</code> doi_tac 15 phút) + <strong>7 ca <code>bo</code></strong> = 48 ca bỏ qua gợi ý.',
+        '<strong>129 ca <code>giu</code></strong> (72,9%, VD: <code>RF-70000</code>, <code>RF-70005</code>, <code>RF-70011</code>).',
+        'Mốc kích hoạt giảm xem lại theo bậc ở E2: khi <code>sua + bo &lt; 15%</code> trong 1 tuần liên tiếp.'
+      ],
+      qa: 'Chú ý mẫu số là <strong>177 ca được xem lại</strong>, KHÔNG phải 1.200 tổng yêu cầu (nếu chia nhầm 1.200 sẽ ra 4% sai hoàn toàn).'
+    },
+
+    e2_wage25: {
+      badge: '<span class="badge badge-info">CP5 · E2 (Rủi ro lương +25% · So sánh công bằng)</span>',
+      title: 'Lương +25%: CPS 5.506 đ (+23,1%) · Cả hệ thống 7.262 đ = 0,48× của 15.000 đ',
+      formula: 'Đơn giá phút tăng 25%: 2.000 → 2.500 đ/phút; mốc tự làm tăng: 12.000 → 15.000 đ\n• Tổng chi phí trợ lý mới = 329.585 + 2.022 phút × 2.500 = 5.384.585 đ [sim]\n• CPS mới = 5.384.585 ÷ 978 = 5.506 đ (+23,1% so với 4.472 đ) [sim]\n• Cả hệ thống (cộng 222 ca NV làm thay ở mức 15.000 đ):\n  (5.384.585 + 222 × 15.000) ÷ 1.200 = 7.262 đ/yêu cầu = 0,48× của 15.000 đ [sim]',
+      why: 'Vì 92,5% chi phí trợ lý là giờ nhân viên, khi lương tăng 25% thì CPS tăng mạnh (+23,1%). Tuy nhiên mốc nhân viên tự làm cũng tăng 25% lên 15.000 đ, nên khi so công bằng cả hệ thống, tỉ lệ vẫn giữ quanh <strong>0,48×</strong> (gần như không đổi so với 0,49× gốc).',
+      cases: [
+        'Hành động quản trị: khi lương tăng, mỗi phút xem lại hoặc làm lại giảm được mang lại giá trị tiết kiệm lớn hơn 25% (2.500 đ/phút thay vì 2.000 đ/phút).',
+        'Người phụ trách theo dõi: <strong>Giám đốc vận hành</strong>.'
+      ],
+      qa: 'Nhóm đã kiểm tra kỹ và sửa dứt điểm lỗi ghi "0,37×" trong PR #2 sang con số so sánh công bằng <strong>0,48×</strong> (7.262 đ ÷ 15.000 đ).'
+    }
+  };
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const notesDrawer = document.getElementById('notesDrawer');
+  const notesText = document.getElementById('notesText');
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalBadge = document.getElementById('modalBadge');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  let idx = 0;
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    counter.textContent = `${idx + 1} / ${slides.length}`;
+    progress.style.width = `${((idx + 1) / slides.length) * 100}%`;
+    notesText.textContent = slides[idx].dataset.notes || '';
+  }
+
+  function go(delta) {
+    idx = Math.max(0, Math.min(slides.length - 1, idx + delta));
+    render();
+  }
+
+  function openInfo(key) {
+    const d = INFO_DATA[key];
+    if (!d) return;
+    modalBadge.innerHTML = d.badge;
+    modalTitle.textContent = d.title;
+    modalBody.innerHTML = `
+      <div class="modal-section">
+        <h4>1 · Công thức &amp; Cách tính chi tiết</h4>
+        <div class="formula-box">${d.formula}</div>
+      </div>
+      <div class="modal-section why">
+        <h4>2 · Tại sao lại ra con số này?</h4>
+        <p>${d.why}</p>
+      </div>
+      <div class="modal-section cases">
+        <h4>3 · Gồm những case / bản ghi cụ thể nào?</h4>
+        <ul>${d.cases.map(c => `<li>${c}</li>`).join('')}</ul>
+      </div>
+      <div class="modal-section qa">
+        <h4>4 · Lưu ý &amp; Gợi ý trả lời hội đồng Gate 2a</h4>
+        <p>${d.qa}</p>
+      </div>
+    `;
+    modalBackdrop.classList.add('open');
+  }
+
+  function closeModal() {
+    modalBackdrop.classList.remove('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.info-btn');
+    if (btn && btn.dataset.info) {
+      e.stopPropagation();
+      openInfo(btn.dataset.info);
+    }
+  });
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  modalBackdrop.addEventListener('click', (e) => {
+    if (e.target === modalBackdrop) closeModal();
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => go(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => go(1));
+  document.getElementById('notesBtn').addEventListener('click', () => notesDrawer.classList.toggle('open'));
+  document.getElementById('fsBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+    else document.exitFullscreen().catch(() => {});
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalBackdrop.classList.contains('open')) {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if (modalBackdrop.classList.contains('open')) return;
+
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+    else if (e.key === 'Home') { idx = 0; render(); }
+    else if (e.key === 'End') { idx = slides.length - 1; render(); }
+    else if (e.key === 'n' || e.key === 'N') notesDrawer.classList.toggle('open');
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen().catch(() => {});
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>
