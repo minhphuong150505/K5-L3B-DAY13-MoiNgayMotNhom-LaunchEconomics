@@ -22,19 +22,19 @@
   - chi phí mỗi việc thành công 4.472 đ, gấp 16,3 lần hoá đơn token chia số yêu cầu [simulated];
   - ba yếu tố nhạy nhất: làm lại +51,8%, xem lại +40,7%, lương +23,1% [simulated];
   - so với nhân viên tự làm: phạm vi pilot đã cộng chi phí cố định 4.599 đ = 0,38×, nhưng xem lại 100% thì 0,98–1,03× [simulated].
-- Hồ sơ mục 4–7: ghi trạng thái "Chưa" kèm số đã có, để cập nhật khi các file nguồn hoàn tất. Liệt kê sẵn các con số bất lợi mà đề xuất cuối phải xử lý.
+- Hoàn thiện toàn bộ `report/team/pilot_plan.yaml` (D1, D2, đánh đổi mức chênh 6 điểm, 4 luật dừng đủ 4 vế, không còn dấu `?`).
+- Hoàn thiện đủ 7 mục và chốt đề xuất **Go có điều kiện** kèm bảng 4 điều kiện có ngưỡng, người phụ trách và ngày kiểm tra trong `report/team/ho_so_launch_v0.md`.
 
 ## 4. Bằng chứng
 
 - `report/team/bang_loi.md`: cột Nhãn người 2, cột Trùng?, cột Nhãn thống nhất, tỉ lệ đồng thuận, quy tắc cho 8 ca lệch, định nghĩa đã viết lại.
-- `report/team/ho_so_launch_v0.md`: bảng 7 mục và phần đề xuất.
-- Commit:
-  - `01e68ad`: hồ sơ launch v0;
-  - `38a0735`: cột Nhãn người 2;
-  - `f041fe4`: cột Nhãn thống nhất;
-  - `ba5585e`: hoàn thiện bảng lỗi.
-
-  Các commit trên nhánh `vietanh/cp3-gan-nhan-nguoi-2`, merge qua PR #4.
+- `report/team/pilot_plan.yaml`: kế hoạch pilot đầy đủ, hợp lệ `yaml.safe_load`.
+- `report/team/ho_so_launch_v0.md`: bảng 7 mục và đề xuất **Go có điều kiện** kèm 4 điều kiện.
+- Commit & PR:
+  - `01e68ad`: dựng khung hồ sơ launch v0;
+  - PR #4 (`38a0735`, `f041fe4`, `ba5585e`): cột Nhãn người 2, Nhãn thống nhất và hoàn thiện bảng lỗi;
+  - PR #8 (`3cf1285`): điền hoàn chỉnh `pilot_plan.yaml`;
+  - PR #9 (`1d5d908`): chốt hồ sơ launch v0 (Go có điều kiện).
 
 ## 5. Công cụ AI đã dùng
 
@@ -57,6 +57,6 @@
   - Sau khi so với nhãn tham khảo, bộ nhãn của tôi khớp 15/20 (lệch ca 6, 12, 13, 17, 18). Tôi gắn "Hệ thống" quá rộng và chưa phân biệt rõ Ngầm với lỗi đã lộ ra.
   - Bài học 1: Ngầm chỉ khi không ai nhận ra cho tới lúc kiểm tra mẫu. Khách đã mở lại hay đã bị từ chối thì lỗi đã lộ ra.
   - Bài học 2: ngoài phạm vi trợ lý thì là Giới hạn hệ thống, kể cả khi trợ lý trả lời kém.
-- Việc còn tồn đọng:
-  - chốt nhãn ca 12 trong `bang_loi.md` cho khớp với bảng khắc phục;
-  - cập nhật hồ sơ mục 4–7 và đề xuất sau khi nhóm hoàn tất CP4 (`pilot_plan.yaml`).
+- Cập nhật hoàn tất các đầu việc tồn đọng trước đó:
+  - đã thống nhất ca 12 là `Ngầm` trong `bang_loi.md` (PR #5) cho khớp bảng khắc phục;
+  - đã hoàn thiện `pilot_plan.yaml` (PR #8) và chốt đủ mục 4–7 cùng đề xuất **Go có điều kiện** trong `ho_so_launch_v0.md` (PR #9).

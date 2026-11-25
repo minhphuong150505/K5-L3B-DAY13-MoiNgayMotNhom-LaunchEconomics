@@ -7,7 +7,7 @@
 - **Repo nhóm:** `K5-L3B-DAY13-MoiNgayMotNhom-LaunchEconomics`
 - **URL repo:** https://github.com/minhphuong150505/K5-L3B-DAY13-MoiNgayMotNhom-LaunchEconomics
 - **Nhánh nộp:** `main`
-- **Commit mới nhất trước khi cập nhật `TEAM.md`:** `7da3b9e` *(sẽ cập nhật hash commit chốt cuối sau phiên duyệt chéo 17:00–17:45)*
+- **Trạng thái hoàn thiện:** Đã hoàn tất 5/5 checkpoint (CP1–CP5), hoàn chỉnh 6/6 file hồ sơ nhóm, 4/4 báo cáo cá nhân, duyệt chéo Gate 2a (chấm nhóm Delta đạt 25/30 — Go có điều kiện) và chốt trên nhánh `main` (PR #1–#9 và commit đóng gói cuối).
 
 ## Thành viên
 
@@ -45,8 +45,8 @@ Bốn báo cáo cá nhân nằm trong `report/team/`:
 
 ### Bằng chứng
 
-- File: `src/lab13.py`, `tests/test_lab13.py`, `report/team/2A202603997_NguyenMinhPhuong.md`.
-- PR & commit: PR #1 (`bff4b9e`, merge `f0b6a06`), commit sửa đồng bộ `f2a86ea` trên PR #2.
+- File: `src/lab13.py`, `tests/test_lab13.py`, `docs/slide_gate2a_MoiNgayMotNhom.html`, `TEAM.md`, `report/team/group_report.md`, `report/team/phieu_cham.md`, `report/team/2A202603997_NguyenMinhPhuong.md`.
+- PR & commit: PR #1 (`bff4b9e`, merge `f0b6a06`), commit sửa đồng bộ `f2a86ea` (PR #2), PR #7 (`5718b24`, merge `aa60015`), slide trình bày (`d50140e`), rà soát & đóng gói chốt bài cuối phiên Gate 2a.
 - Kiểm chứng: `src/venv/bin/python -m unittest discover -s tests -v` (14/14 PASS), `cd src && ./venv/bin/python -W error lab13.py` (0 lỗi, 0 cảnh báo).
 
 ---
@@ -67,8 +67,8 @@ Bốn báo cáo cá nhân nằm trong `report/team/`:
 
 ### Bằng chứng
 
-- File: `report/team/bang_chi_phi.md`, `report/team/2A202603994_NguyenVanHaiQuan.md`.
-- PR & commit: PR #3 (`89d52fb`, `225f2a2`, `5038743`, merge `5da7b54`), PR #5 (`f5d8e6d`, merge `82cc6ee`).
+- File: `report/team/bang_chi_phi.md`, `report/team/2A202603994_NguyenVanHaiQuan.md` (hỗ trợ rà soát cuối ở `report/team/bang_loi.md` và `report/team/ho_so_launch_v0.md`).
+- PR & commit: PR #3 (`89d52fb`, `225f2a2`, `5038743`, merge `5da7b54`), PR #5 (`f5d8e6d`, merge `82cc6ee`), hỗ trợ chốt PR #9 (`1d5d908`, merge `cde102b`).
 
 ---
 
@@ -102,10 +102,10 @@ Bốn báo cáo cá nhân nằm trong `report/team/`:
 ### Đóng góp cụ thể
 
 - Gắn tay độc lập 20 ca lỗi (trùng 12/20 = 60% với người gắn nhãn 1); cùng Ánh Dương viết lại định nghĩa cho 2 cặp loại dễ nhầm (`Hệ thống / Giới hạn hệ thống` và `Ngầm / loại khác`), ghi 8 câu quy tắc phân biệt cho 8 ca lệch (`6, 7, 12, 13, 15, 17, 18, 20`) và hoàn thiện bảng thống nhất trong `bang_loi.md`.
-- Dựng và cập nhật sớm `report/team/ho_so_launch_v0.md` (điền đầy đủ mục 1–3, khung số liệu mục 4–7 và danh sách con số bất lợi cần đề xuất xử lý).
-- Đảm nhận phần hoàn thiện cuối cùng cho `pilot_plan.yaml`, mục 4–7 của `ho_so_launch_v0.md` và `phieu_cham.md` trong phiên duyệt chéo Gate 2a.
+- Hoàn thiện toàn bộ `report/team/pilot_plan.yaml` (đủ D1–D2, phân tích đánh đổi mức chênh 6 điểm, 4 luật dừng đủ 4 vế NẾU – TRONG – THÌ – KHÔNG THÌ, không còn dấu `?` và hợp lệ `yaml.safe_load`).
+- Dựng và chốt toàn bộ 7 mục + đề xuất **Go có điều kiện** kèm bảng 4 điều kiện có ngưỡng, vai trò và ngày kiểm tra trong `report/team/ho_so_launch_v0.md`; tham gia duyệt chéo Gate 2a cùng nhóm.
 
 ### Bằng chứng
 
-- File: `report/team/bang_loi.md`, `report/team/ho_so_launch_v0.md`, `report/team/2A202604029_TranVietAnh.md` (và `report/team/pilot_plan.yaml`, `report/team/phieu_cham.md` sau khi hoàn tất CP4/CP5).
-- PR & commit: `01e68ad` (`ho_so_launch_v0.md`), PR #4 (`38a0735`, `f041fe4`, `ba5585e`, merge `714e246`), PR #6 (`e793169`, merge `7da3b9e`).
+- File: `report/team/bang_loi.md`, `report/team/pilot_plan.yaml`, `report/team/ho_so_launch_v0.md`, `report/team/2A202604029_TranVietAnh.md`.
+- PR & commit: `01e68ad` (`ho_so_launch_v0.md`), PR #4 (`38a0735`, `f041fe4`, `ba5585e`, merge `714e246`), PR #6 (`e793169`, merge `7da3b9e`), PR #8 (`3cf1285`, merge `bf44747`), PR #9 (`1d5d908`, merge `cde102b`).

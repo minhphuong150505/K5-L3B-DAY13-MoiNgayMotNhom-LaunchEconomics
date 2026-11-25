@@ -34,11 +34,11 @@
 
 ## 4. Bằng chứng
 
-- Nhánh làm việc: `feat/minh-phuong-lab13-core`
+- Nhánh làm việc & PR: `feat/minh-phuong-lab13-core` (PR #1), `docs/team-and-group-report` (PR #7), review và đồng bộ chéo PR #1–#9 trên `main`.
 - File mã nguồn hoàn chỉnh: `src/lab13.py` (chạy sạch bằng `cd src && ./venv/bin/python -W error lab13.py`, không có cảnh báo hay lỗi, in `Ba phép thử đáp án biết trước: ĐẠT` và đầy đủ bảng A1–A4, B1–B4, D1, E1).
 - Bộ kiểm thử tự động: `tests/test_lab13.py` (14/14 unit & integration test đạt 100%).
-- Báo cáo cá nhân: `report/team/2A202603997_NguyenMinhPhuong.md`.
-- Bảo toàn nguyên trạng các file gốc (`src/lab13_starter.py`, `src/logix_runs.csv`, `src/logix_requests.csv`, `report/team/MSSV_HoTen.md`) và không chỉnh sửa file thuộc quyền sở hữu của 3 thành viên còn lại.
+- Hồ sơ tổng hợp & trình bày: `TEAM.md`, `report/team/group_report.md`, `report/team/phieu_cham.md` (chấm nhóm Delta), `docs/slide_gate2a_MoiNgayMotNhom.html`, và `report/team/2A202603997_NguyenMinhPhuong.md`.
+- Bảo toàn nguyên trạng các file gốc (`src/lab13_starter.py`, `src/logix_runs.csv`, `src/logix_requests.csv`, `report/team/MSSV_HoTen.md`).
 
 ## 5. Công cụ AI đã dùng
 
@@ -51,5 +51,5 @@
 
 ## 6. Tự đánh giá
 
-- Hoàn thành 100% đầu việc kỹ thuật được phân công cho vai trò Team Lead & Core Dev theo đúng phân quyền sở hữu file, sẵn sàng bàn giao bộ số chuẩn cho Hải Quân, Ánh Dương và Việt Anh ghép vào 6 file hồ sơ Gate 2a.
-- Điểm cần lưu ý tiếp theo sau khi các thành viên nộp PR của từng mảng: thực hiện đồng bộ số liệu chéo (Sync 5) và soát 5 quy tắc bắt buộc trên toàn bộ repository trước giờ duyệt chéo 17:00 và hạn nộp 23:59 GMT+7.
+- Hoàn thành 100% đầu việc kỹ thuật và điều phối cho vai trò Team Lead & Core Dev: khoá sớm mã nguồn `src/lab13.py` và bộ test 14/14 PASS, review & đồng bộ số liệu chéo qua các PR #1–#9, dựng slide bảo vệ Gate 2a, hoàn thiện phiếu chấm nhóm Delta và rà soát đủ 5 quy tắc bắt buộc trên toàn bộ repository trước hạn nộp 23:59 GMT+7.
+- Bài học rút ra: phân quyền sở hữu file ngay từ đầu giúp 4 thành viên làm song song không xung đột Git, nhưng vẫn cần một bước soát đồng bộ cuối cùng để chỉnh các sai lệch nhỏ về làm tròn, cách so sánh chi phí hệ thống và nhãn `simulated`.

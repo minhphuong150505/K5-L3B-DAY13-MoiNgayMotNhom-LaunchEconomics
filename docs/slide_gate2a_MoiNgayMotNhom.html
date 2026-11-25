@@ -1035,6 +1035,150 @@
     </div>
   </section>
 
+  <!-- SLIDE 10: PHỤ LỤC QUYẾT ĐỊNH D1 — VÌ SAO CHỌN CHIA THEO NHÂN VIÊN -->
+  <section class="slide" data-notes="Slide giải trình sâu Quyết định D1 (khi hội đồng hỏi sâu về thiết kế thử nghiệm): Tại sao chọn chia theo nhân viên 20+20? Từng đơn (1.251) bị nhiễm chéo vì cùng 1 người sáng dùng trợ lý chiều tự làm. Từng kho (6+6) chỉ có 6 cụm (<20) và trần mẫu chỉ 300. Chỉ chia theo nhân viên vừa sạch (20 cụm độc lập, phân tầng theo depot), vừa giải được bài toán cỡ mẫu bằng cách nới MDE lên 6 điểm: 20 người × 299 đơn, DE = 6,96, ra 859 đơn hiệu dụng mỗi bên (power ở 5 điểm còn 64%).">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">09 · Quyết định D1 · Lựa chọn cách chia ai được dùng trợ lý</div>
+        <h2>Quyết định chọn: <span class="c-ok">Chia theo nhân viên (20 + 20)</span> &amp; chấp nhận MDE 6 điểm</h2>
+      </div>
+      <span class="badge badge-ok">Phương án duy nhất vừa sạch vừa khả thi</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-3">
+        <div class="card highlight-warn">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge badge-warn">Loại · Không sạch</span>
+            <span style="font-size:12px; color:var(--muted);">Cách 1</span>
+          </div>
+          <h3>Chia theo từng đơn</h3>
+          <div class="kpi-val" style="font-size:26px;">1.251 <span style="font-size:13px; color:var(--muted); font-weight:600;">đơn/bên</span> <button class="info-btn" data-info="d1_1251" title="Chi tiết 1.251 đơn">!</button></div>
+          <ul class="clean warn" style="margin-top:10px; font-size:13px;">
+            <li>Đủ mẫu cho mức chênh 5 điểm nhưng hai nhóm <strong>không tách nhau</strong>.</li>
+            <li>Cùng 1 nhân viên sáng dùng trợ lý, chiều tự làm → mang câu trả lời trợ lý sang đơn đối chứng.</li>
+            <li><em>Ví von:</em> cho học sinh xem đáp án bài lẻ rồi gọi bài kế bên là kiểm tra độc lập.</li>
+          </ul>
+        </div>
+
+        <div class="card highlight-ok">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge badge-ok">ĐƯỢC CHỌN</span>
+            <span style="font-size:12px; color:var(--emerald); font-weight:700;">Cách 2</span>
+          </div>
+          <h3>Chia theo nhân viên (20 + 20)</h3>
+          <div class="kpi-val c-ok" style="font-size:26px;">299 <span style="font-size:13px; color:var(--muted); font-weight:600;">đơn/NV → 859 eff</span> <button class="info-btn ok" data-info="d1_mde6" title="Chi tiết 299 đơn/NV & 859 hiệu dụng">!</button></div>
+          <ul class="clean ok" style="margin-top:10px; font-size:13px;">
+            <li><strong>Sạch &amp; tách tác động:</strong> người A luôn dùng, người B không bao giờ dùng; đủ <strong>20 cụm/bên</strong>, bốc ngẫu nhiên phân tầng depot.</li>
+            <li>Trần mẫu <code>20 / 0,02 = 1.000</code> không đạt 5 điểm (1.251), nhưng đạt <strong>6 điểm (859)</strong> với <code>DE = 6,96</code>.</li>
+            <li>Công khai đánh đổi: nếu thật chỉ hơn 5 điểm, power còn <strong>64%</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="card highlight-warn">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge badge-warn">Loại · Thiếu cụm &amp; mẫu</span>
+            <span style="font-size:12px; color:var(--muted);">Cách 3</span>
+          </div>
+          <h3>Chia theo kho (6 + 6 depot)</h3>
+          <div class="kpi-val c-warn" style="font-size:26px;">300 <span style="font-size:13px; color:var(--muted); font-weight:600;">trần hiệu dụng</span> <button class="info-btn warn" data-info="d1_caps" title="Chi tiết trần 300 depot">!</button></div>
+          <ul class="clean warn" style="margin-top:10px; font-size:13px;">
+            <li>Trần <code>6 / 0,02 = 300</code> quá xa mốc 1.251 lẫn 859 — chạy bao lâu cũng không đủ.</li>
+            <li>Chỉ có <strong>6 cụm/bên</strong> (dưới ngưỡng 20 cụm). Dễ bật công tắc nhưng kết quả khó tin.</li>
+            <li><em>Ví von:</em> chia 6 lớp, may một lớp giỏi là tưởng sách thắng.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Giải thích chi tiết: Vì sao tăng thêm đơn trong cùng nhân viên vẫn không vượt nổi trần <code>c / 0,02</code>? <button class="info-btn amber" data-info="d1_ceiling_math" title="Chi tiết công thức trần & 605 / 953 / 995">!</button></h3>
+        <div class="grid-2" style="margin-top:8px;">
+          <div style="font-size:13.5px; line-height:1.5; color:#e2e8f0;">
+            Công thức: <code>DE = 1 + (m − 1) × 0,02</code> và <code>n_hiệu_dụng = (c × m) / DE</code>. Khi <code>m</code> càng lớn thì <code>DE ≈ m × 0,02</code>, nên <code>m</code> ở tử và mẫu triệt tiêu nhau → tiệm cận <code>c / 0,02</code>. Với 75 đơn/NV (<code>DE = 2,48</code>) cần <code>3.103</code> đơn = <strong>42 NV/bên (84 &gt; 40 NV)</strong> nên không đủ người.
+          </div>
+          <table>
+            <thead>
+              <tr><th>Kịch bản (c = 20 nhân viên/bên)</th><th class="num">DE</th><th class="num">n hiệu dụng</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>75 đơn / nhân viên</td><td class="num">2,48</td><td class="num">≈ <strong>605</strong></td></tr>
+              <tr style="background:rgba(52,211,153,0.12);"><td><strong class="c-ok">299 đơn / nhân viên (Mốc chọn · 6 điểm)</strong></td><td class="num c-ok"><strong>6,96</strong></td><td class="num c-ok"><strong>859</strong></td></tr>
+              <tr><td>1.000 đơn → 10.000 đơn / nhân viên</td><td class="num">20,98 → 200,98</td><td class="num">953 → 995 (&lt; 1.000)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: 3 LƯU Ý VẬN HÀNH THỰC TẾ KHI CHẠY PILOT NHÂN VIÊN -->
+  <section class="slide" data-notes="Slide chốt vận hành (3 bẫy cực sâu khi triển khai phương án chia theo nhân viên): (1) Đừng họp chốt sau đúng 7 ngày: 1.500 đơn/40 người ≈ 37-38 đơn/người/ngày nên 7 ngày mới gom ~263 < 299; bước 20 người cần ít nhất 8 ngày (hoặc ~10 ngày nếu lọc riêng phạm vi noi_dia + hang_nang), cộng thêm 7 ngày bảo hành không mở lại của từng đơn. (2) Đừng tắt sớm vì lệch 2 điểm ở bước 4 người vì nhiễu bốc mẫu làm lệch giả tới 56/1.000 lần (lên 10 người mới giảm còn 8/1.000). (3) Đừng cộng 40 triệu tiền thuê cố định vào luật dừng 8.000 đ ở bước 4 người (sẽ vọt lên 15.300 đ dù tiền máy chỉ 3.400 đ).">
+    <div class="slide-header">
+      <div>
+        <div class="eyebrow">10 · Vận hành thực tế phương án chia theo nhân viên (D1 · D3 · A4 × E2)</div>
+        <h2>3 bẫy vận hành phải tránh khi mở dần <code>4 → 10 → 20</code> nhân viên</h2>
+      </div>
+      <span class="badge badge-sim">Tách rõ lịch gom đơn · nhiễu 4 người · phí cố định</span>
+    </div>
+
+    <div class="content">
+      <div class="grid-3">
+        <div class="card highlight-info" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <span class="badge badge-info" style="margin-bottom:10px;">Bẫy 1 · Lịch họp chốt (D1)</span>
+            <h3>Đừng họp chốt sau đúng 7 ngày <button class="info-btn" data-info="op_8days" title="Chi tiết 263 vs 299 đơn & 8–10 ngày + 7 ngày bảo hành">!</button></h3>
+            <div class="kpi-val c-info" style="margin:8px 0;">≥ 8–10 ngày</div>
+            <ul class="clean" style="font-size:13.2px;">
+              <li>Toàn công ty 1.500 đơn/40 NV ≈ <strong>37–38 đơn/NV/ngày</strong> → 7 ngày mới được <strong>~263 đơn</strong> (&lt; 299), cần ít nhất <strong>8 ngày</strong>.</li>
+              <li>Trong phạm vi <code>noi_dia + hang_nang</code> (~30,7 đơn/NV/ngày) cần <strong>~10 ngày</strong> để gom đủ 299 đơn/NV.</li>
+            </ul>
+          </div>
+          <div class="callout" style="margin-top:12px; font-size:12.5px;">
+            <strong>Tách 2 mốc:</strong> 8–10 ngày là gom đủ đơn; <strong>7 ngày "không mở lại"</strong> là bảo hành của từng đơn — hai khoảng này cộng nối tiếp, không thay nhau.
+          </div>
+        </div>
+
+        <div class="card highlight-warn" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <span class="badge badge-warn" style="margin-bottom:10px;">Bẫy 2 · Còi mong manh (D3)</span>
+            <h3>Đừng tắt vì lệch 2 điểm khi mới 4 người <button class="info-btn warn" data-info="op_4staff_noise" title="Chi tiết 56/1.000 vs 8/1.000 lần lệch giả">!</button></h3>
+            <div class="kpi-val c-warn" style="margin:8px 0;">56 / 1.000</div>
+            <ul class="clean warn" style="font-size:13.2px;">
+              <li>Bốc ngẫu nhiên 1.000 lần khi trợ lý <em>không hề tăng lỗi</em>:
+                <br>• Bước <strong>4 người:</strong> <code>56/1.000</code> lần (5,6%) tự lệch ≥ 2 điểm!
+                <br>• Bước <strong>10 người:</strong> chỉ còn <code>8/1.000</code> lần (0,8%).</li>
+              <li><strong>Từ 10 người mới kích luật lệch 2 điểm</strong>.</li>
+            </ul>
+          </div>
+          <div class="callout warn" style="margin-top:12px; font-size:12.5px;">
+            <strong>Bước 4 người tắt ngay khi:</strong> mở lại &gt; 6%, hoàn trùng ≥ 1 ca, hoặc nhắn "đã hoàn" nhưng sổ cái không ghi (sai tuyệt đối).
+          </div>
+        </div>
+
+        <div class="card highlight-amber" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <span class="badge badge-sim" style="margin-bottom:10px;">Bẫy 3 · Phí thuê 40 triệu (A4 × D3)</span>
+            <h3>Đừng cộng tiền thuê vào ngưỡng 8.000 đ <button class="info-btn amber" data-info="op_fixed_8000" title="Chi tiết 15.300 đ / 8.200 đ / 5.800 đ">!</button></h3>
+            <div class="kpi-val c-amber" style="margin:8px 0;">15.300 đ <span class="sim-tag">sim</span></div>
+            <ul class="clean amber" style="font-size:13.2px;">
+              <li>Chi phí biến đổi (máy + giờ người) trong phạm vi chỉ <strong>~3.414 đ</strong> (~3.400 đ) <span class="sim-tag">sim</span>.</li>
+              <li>Nếu gánh cả 40 triệu cố định khi còn ít người:
+                <br>• <strong>4 người:</strong> 11.900 + 3.400 ≈ <strong>15.300 đ</strong>
+                <br>• <strong>10 người:</strong> ≈ <strong>8.200 đ</strong> · <strong>20 người:</strong> ≈ <strong>5.800 đ</strong></li>
+            </ul>
+          </div>
+          <div class="callout amber" style="margin-top:12px; font-size:12.5px;">
+            <strong>Tách rõ 2 luật:</strong> Ngưỡng <code>8.000 đ</code> ở D3 chỉ tính chi phí biến đổi; ít đơn gánh cố định xử lý bằng đàm phán hợp đồng ở E2.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout ok" style="text-align:center; font-size:14.2px;">
+        <strong>Tóm gọn Quyết định D1–D3:</strong> Chia theo <strong>20 + 20 nhân viên</strong> (MDE 6 điểm, <code>m ≥ 299</code>, gom 8–10 ngày + 7 ngày bảo hành) · Bước 4 người chỉ chặn lỗi tuyệt đối · Luật <code>8.000 đ</code> chỉ tính chi phí biến đổi.
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <div class="progress" id="progress"></div>
@@ -1062,7 +1206,7 @@
   <div><strong>MoiNgayMotNhom</strong> · Lab 13 Gate 2a · Bấm <span class="info-btn" style="pointer-events:none; margin:0 3px;">!</span> cạnh các số để xem chi tiết &amp; case</div>
   <div class="hud-controls">
     <button id="prevBtn" title="Slide trước (←)">← Trước</button>
-    <span id="counter" style="min-width:58px; text-align:center; font-variant-numeric:tabular-nums;">1 / 9</span>
+    <span id="counter" style="min-width:58px; text-align:center; font-variant-numeric:tabular-nums;">1 / 11</span>
     <button id="nextBtn" title="Slide sau (→ / Space)">Sau →</button>
     <button id="notesBtn" title="Ghi chú thuyết trình (N)">Ghi chú (N)</button>
     <button id="fsBtn" title="Toàn màn hình (F)">Toàn màn hình (F)</button>
@@ -1416,6 +1560,55 @@
         'Người phụ trách theo dõi: <strong>Giám đốc vận hành</strong>.'
       ],
       qa: 'Nhóm đã kiểm tra kỹ và sửa dứt điểm lỗi ghi "0,37×" trong PR #2 sang con số so sánh công bằng <strong>0,48×</strong> (7.262 đ ÷ 15.000 đ).'
+    },
+
+    d1_ceiling_math: {
+      badge: '<span class="badge badge-sim">D1 · Toán học trần cỡ mẫu cụm</span>',
+      title: 'Tại sao 20 nhân viên không vượt nổi trần 1.000 (605 → 859 → 953 → 995)',
+      formula: 'DE = 1 + (m − 1) × ICC   (ICC = 0,02)\nn_hiệu_dụng = (c × m) ÷ [1 + (m − 1) × 0,02]\n\nVới c = 20 nhân viên mỗi bên:\n• m =     75 đơn/NV: DE =   2,48 → n_eff = 1.500 ÷   2,48 ≈ 605\n• m =    299 đơn/NV: DE =   6,96 → n_eff = 5.980 ÷   6,96 = 859 (MỐC CHỌN · 6 điểm)\n• m =  1.000 đơn/NV: DE =  20,98 → n_eff = 20.000 ÷  20,98 ≈ 953\n• m = 10.000 đơn/NV: DE = 200,98 → n_eff = 200.000 ÷ 200,98 ≈ 995\n• m → ∞:             n_eff → c ÷ ICC = 20 ÷ 0,02 = 1.000',
+      why: 'Các đơn do cùng một nhân viên xử lý có thói quen/phong cách tương đồng (<code>ICC = 0,02</code>), giống như 10 bài làm của cùng 1 học sinh không độc lập bằng 10 bài của 10 học sinh. Vì vậy mỗi đơn tăng thêm trong cùng một người chỉ mua thêm rất ít thông tin mới.',
+      cases: [
+        '<strong>Nếu giữ m = 75 đơn/NV để đo 5 điểm (1.251):</strong> Cần <code>1.251 × 2,48 = 3.103</code> đơn/bên → <code>3.103 / 75 ≈ 42</code> NV/bên (tổng 84 &gt; 40 NV hiện có).',
+        '<strong>Nếu chia theo 6 kho/bên:</strong> Trần chỉ <code>6 / 0,02 = 300</code> — không bao giờ đạt dù cả 1.251 (5 điểm) hay 859 (6 điểm).',
+        '<strong>Chốt chia 20 + 20 NV ở 6 điểm:</strong> Vừa sạch tác động (20 cụm), vừa đạt 859 &lt; 1.000 chỉ với 299 đơn/NV.'
+      ],
+      qa: 'Câu trả lời 1 dòng gây ấn tượng mạnh với hội đồng: "Khi chia theo cụm, số cụm quyết định trần thông tin (<code>c/ICC</code>); tăng gấp 100 lần số đơn mỗi người chỉ đẩy từ 953 lên 995 chứ không bao giờ phá được trần 1.000."'
+    },
+
+    op_8days: {
+      badge: '<span class="badge badge-info">D1 · Vận hành lịch gom đơn &amp; bảo hành 7 ngày</span>',
+      title: 'Vì sao không được họp chốt sau đúng 7 ngày (cần 8–10 ngày gom đơn + 7 ngày bảo hành)',
+      formula: 'Mục tiêu ở bước 20 + 20 nhân viên: m = 299 đơn / nhân viên\n• Nếu tính cả 1.500 đơn/ngày ÷ 40 NV ≈ 37,5 đơn/NV/ngày:\n  - 7 ngày chỉ gom được: 7 × 37,5 ≈ 263 đơn/NV (< 299 → THIẾU MẪU)\n  - Đủ 299 đơn/NV cần:   ceil(299 ÷ 37,5) = 8 ngày\n• Nếu lọc riêng phạm vi pilot noi_dia + hang_nang (81,8% ≈ 1.228 đơn/ngày → 30,7 đơn/NV/ngày):\n  - Đủ 299 đơn/NV cần:   ceil(299 ÷ 30,7) = 10 ngày\n• Cộng thêm: 7 ngày chờ cửa sổ "không mở lại trong 7 ngày" cho các đơn ngày cuối!',
+      why: 'Rất dễ nhầm giữa "thời gian gom đủ cỡ mẫu" (8–10 ngày ở bước 20 người) với "thời gian bảo hành của chỉ số chính" (7 ngày không mở lại cho từng đơn). Hai khoảng thời gian này nối tiếp nhau chứ không thay thế nhau.',
+      cases: [
+        '<strong>Case họp chốt sớm ngày thứ 7:</strong> Mới chỉ có ~263 đơn/NV (toàn công ty) hoặc ~215 đơn/NV (phạm vi pilot), và các đơn ngày 2–7 còn chưa qua đủ 7 ngày kiểm tra mở lại → số đo bị lệch lạc quan giả tạo!',
+        '<strong>Lịch chạy thực tế (~4 tuần):</strong> Tuần 1 (10% = 4 NV) → Tuần 2 (25% = 10 NV) → ~8–10 ngày đo chính ở 50% (20 NV) + 7 ngày chờ đóng cửa sổ mở lại rồi mới họp ra quyết định.'
+      ],
+      qa: 'Nhắc rõ: chỉ đọc chỉ số chính từ bước 50% (20 + 20 NV) sau khi đơn cuối cùng đã đi qua đủ 7 ngày theo dõi mở lại.'
+    },
+
+    op_4staff_noise: {
+      badge: '<span class="badge badge-warn">D3 · Còi mong manh ở bước rollout 4 người</span>',
+      title: 'Nhiễu thống kê ở bước 4 người: 56/1.000 lần tự lệch ≥ 2 điểm',
+      formula: 'Mô phỏng bốc mẫu ngẫu nhiên 1.000 lần (giả sử trợ lý KHÔNG hề làm tăng lỗi so với đối chứng):\n• Bước 4 người (10%):  56 / 1.000 lần (5,6%) vẫn ngẫu nhiên lệch ≥ 2 điểm → BÁO ĐỘNG GIẢ CAO\n• Bước 10 người (25%): chỉ còn 8 / 1.000 lần (0,8%) → ĐỦ ỔN ĐỊNH ĐỂ DÙNG LUẬT LỆCH 2 ĐIỂM',
+      why: '2 điểm chỉ tương đương 2 đơn trong 100 đơn. Khi mới mở cho 4 nhân viên, số cụm quá nhỏ nên chỉ cần 1 nhân viên gặp đúng vài đơn khó là tỉ lệ lệch ngay 2 điểm dù trợ lý không hề có lỗi — giống như bốc 4 học sinh thì điểm trung bình rất dễ lệch ngẫu nhiên.',
+      cases: [
+        '<strong>Bước 4 người (tắt ngay lập tức với lỗi tuyệt đối):</strong> Mở lại &gt; 6%, hoàn trùng ≥ 1 ca (Ca 20), nhắn "đã hoàn" nhưng sổ cái không ghi (Ca 7) — những lỗi này sai bất kể ít hay nhiều người.',
+        '<strong>Từ bước 10 người trở đi:</strong> Kích hoạt đầy đủ luật so sánh chênh ≥ +2 điểm so với đối chứng trong 3 ngày liên tiếp (xác suất báo động giả giảm 7 lần, từ 5,6% xuống 0,8%).'
+      ],
+      qa: 'Điểm cộng cực lớn trước hội đồng: chứng minh nhóm hiểu bản chất nhiễu cỡ mẫu khi rollout nhiều giai đoạn, không áp máy móc một luật cho mọi bước.'
+    },
+
+    op_fixed_8000: {
+      badge: '<span class="badge badge-sim">A4 × D3 × E2 · Tách cố định khỏi luật dừng 8.000 đ [simulated]</span>',
+      title: 'Gánh 40 triệu cố định khi còn ít người: 4 NV → 15.300 đ · 10 NV → 8.200 đ · 20 NV → 5.800 đ',
+      formula: 'Chi phí biến đổi (máy + giờ người) trong phạm vi pilot noi_dia + hang_nang:\n  3.072.513 đ ÷ 900 việc = 3.414 đ (~3.400 đ/việc) [simulated]\n\nNếu cộng toàn bộ 40.000.000 đ/tháng cố định ở các bước rollout nhỏ:\n• Bước 4 người  (10% · ~3.375 việc/tháng): 40 tr ÷  3.375 ≈ 11.900 + 3.400 ≈ 15.300 đ (> 8.000 đ!)\n• Bước 10 người (25% · ~8.438 việc/tháng): 40 tr ÷  8.438 ≈  4.740 + 3.414 ≈  8.154 đ (~8.200 đ > 8.000 đ!)\n• Bước 20 người (50% · 16.875 việc/tháng): 40 tr ÷ 16.875 ≈  2.370 + 3.414 =  5.784 đ (~5.800 đ < 8.000 đ)\n• Cả 40 người  (100% · 33.750 việc/tháng): 40 tr ÷ 33.750 ≈  1.185 + 3.414 =  4.599 đ (~4.600 đ)',
+      why: 'Nếu cộng luôn 40 triệu tiền thuê cố định vào luật dừng D3 ("CPS > 8.000 đ thì thu hẹp"), luật sẽ hú còi tắt ngay từ tuần 1 (4 người: 15.300 đ) và tuần 2 (10 người: 8.200 đ) dù chi phí máy + giờ người vẫn chạy cực kỳ tốt ở mức 3.414 đ!',
+      cases: [
+        '<strong>Luật dừng D3 (ngưỡng 8.000 đ):</strong> Chỉ đo <strong>chi phí biến đổi</strong> (token + tool + giờ xem lại + giờ làm lại) để phát hiện xem trợ lý có đang làm đội công nhân viên hay không.',
+        '<strong>Rủi ro kinh tế E2 (khối lượng thấp):</strong> Riêng bài toán gánh 40 triệu cố định khi khối lượng nhỏ được quản trị bằng hành động đàm phán lại hợp đồng chi phí cố định theo bậc khối lượng, không kết luận nhầm rằng trợ lý đắt.'
+      ],
+      qa: 'Cực kỳ thuyết phục khi trả lời câu hỏi về mối liên hệ giữa A4 (40 triệu cố định), D3 (ngưỡng 8.000 đ) và E2 (rủi ro khối lượng thấp)!'
     }
   };
 
